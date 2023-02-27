@@ -1,7 +1,7 @@
 {% extends 'base_generic.html' %}
 {% block title %}3D MIEM{% endblock %}
-
 {% block content %}
+
 <style>
     .center {
         display: flex;
@@ -11,54 +11,55 @@
         margin-bottom: 48px;
     }
 
-    h1 {
-        margin: 0;
-        font-size: 32px;
-        margin-bottom: 16px;
-    }
+	.button {
+		display: inline-block;
+		padding: 15px 25px;
+		cursor: pointer;
+		text-align: center;
+		text-decoration: none;
+		outline: none;
+		color: black;
+		background-color: #d6e6ff;
+		border: none;
+		border-radius: 30px;
+	}
 
-    form {
-        margin: 0 auto;
-        padding: 16px;
-        max-width: 600px;
-        border-radius: 6px;
-        box-shadow: 0 0 0px rgba(0, 0, 0, 0.2);
-        background-color: #fff;
-    }
-    
-    table {
-        margin-bottom: 20px; /* Add margin to the bottom of the form */
-    }
-    
+	.button:hover {background-color: #BDD6FF}
+
+	.button:active {
+		background-color: #A3C7FF;
+	}
+
     td, th {
         padding: 10px;
+		font-weight: normal;
     }
     
     tr {
         height: 50px;
     }
-    
-    .form-description {
-        margin-bottom: 30px;
-        font-size: 20px;
-        text-align: center;
-        color: #666;
-    }
 
 </style>
-<div class="center">
-    <h1>Подача заявки на 3D печать</h1>
-    <div class="form-description">
-        <p>СРОК РАССМОТРЕНИЯ ЗАЯВКИ МОЖЕТ ВАРЬИРОВАТЬСЯ ОТ 1 РАБОЧЕГО ДНЯ ДО 3Х</p>
+
+<div class="mt-auto" style="padding: 5% 0 10% 0;">
+    <div class="container p-4">
+        <p class='text-center mb-4 display-6'>
+            <strong>Подача заявки на 3D печать</strong>
+            <br>
+        </p>
+        <p class='text-center mb-4 fs-4'>
+            <small class="text-muted">СРОК РАССМОТРЕНИЯ ЗАЯВКИ МОЖЕТ ВАРЬИРОВАТЬСЯ ОТ 1 РАБОЧЕГО ДНЯ ДО 3Х</small>
+        </p>
     </div>
-    <form method="POST">
-        {% csrf_token %}
-        <table>
-        {{ form.as_table }}
-        </table>
-        <button type="submit">Заказать</button>
-    </form>
+
+	<div class="d-flex justify-content-center align-items-center" style="margin-left: 100px;">
+		<form method="POST">
+			{% csrf_token %}
+			<table style="margin-bottom: 10px">
+			{{ form.as_table }}
+			</table>
+			<button type="submit" class="button">Заказать</button>
+		</form>
+	</div>
 </div>
 {% endblock %}
-
-
