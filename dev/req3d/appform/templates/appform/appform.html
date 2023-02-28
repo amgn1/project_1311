@@ -22,6 +22,7 @@
 		background-color: #d6e6ff;
 		border: none;
 		border-radius: 30px;
+		font-size: 20px
 	}
 
 	.button:hover {background-color: #BDD6FF}
@@ -42,8 +43,39 @@
 	.text {
 		width: 100%;
 	}
+    .form-group {
+		padding-bottom: 30px;
+    }
 	
+	.form-group input {
+	    border: none;
+	    border-bottom: 1px solid #000;
+		padding-bottom: 5px;
+	    outline: none;
+	    font-size: 18px;
+	}
 	
+	.form-group select {
+	    border: none;
+	    border-bottom: 1px solid #000;
+		padding-bottom: 5px;
+	    outline: none;
+	    font-size: 18px;
+	}
+	
+	form label, form input, form select {
+        font-size: 20px;
+    }
+	
+	input[type="file"] {
+		border: none;
+		border-bottom: none;
+		outline: none;
+	}
+	
+	::placeholder {
+		opacity: 0.75; /* Opacity of the placeholder text */
+	}
 </style>
 
 <div class="mt-auto" style="padding: 5% 0 10% 0;">
@@ -57,14 +89,22 @@
         </p>
     </div>
 
-	<div class="d-flex justify-content-center align-items-center" style="margin-left: 0px;">
-		<form method="POST">
-			{% csrf_token %}
-			<table style="margin-bottom: 10px">
-			{{ form.as_table }}
-			</table>
-			<button type="submit" class="button">Заказать</button>
-		</form>
-	</div>
+<div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label style="margin-bottom: 10px;">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <div class="text-center" style="margin-top: 10px;">
+                <button type="submit" class="button">Заказать</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 </div>
 {% endblock %}
