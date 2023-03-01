@@ -1,0 +1,110 @@
+{% extends 'base_generic.html' %}
+{% block title %}3D MIEM{% endblock %}
+{% block content %}
+
+<style>
+    .center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+        margin-bottom: 48px;
+    }
+
+	.button {
+		display: inline-block;
+		padding: 15px 25px;
+		cursor: pointer;
+		text-align: center;
+		text-decoration: none;
+		outline: none;
+		color: black;
+		background-color: #d6e6ff;
+		border: none;
+		border-radius: 30px;
+		font-size: 20px
+	}
+
+	.button:hover {background-color: #BDD6FF}
+
+	.button:active {
+		background-color: #A3C7FF;
+	}
+
+    td, th {
+        padding: 10px;
+		font-weight: normal;
+    }
+    
+    tr {
+        height: 50px;
+    }
+	
+	.text {
+		width: 100%;
+	}
+    .form-group {
+		padding-bottom: 30px;
+    }
+	
+	.form-group input {
+	    border: none;
+	    border-bottom: 1px solid #000;
+		padding-bottom: 5px;
+	    outline: none;
+	    font-size: 18px;
+	}
+	
+	.form-group select {
+	    border: none;
+	    border-bottom: 1px solid #000;
+		padding-bottom: 5px;
+	    outline: none;
+	    font-size: 18px;
+	}
+	
+	form label, form input, form select {
+        font-size: 20px;
+    }
+	
+	input[type="file"] {
+		border: none;
+		border-bottom: none;
+		outline: none;
+	}
+	
+	::placeholder {
+		opacity: 0.75; /* Opacity of the placeholder text */
+	}
+</style>
+
+<div class="mt-auto" style="padding: 5% 0 10% 0;">
+    <div class="container p-4">
+        <p class='text-center mb-4 display-6'>
+            <strong>Подача заявки на 3D печать</strong>
+            <br>
+        </p>
+        <p class='text-center mb-4 fs-4'>
+            <small class="text-muted">СРОК РАССМОТРЕНИЯ ЗАЯВКИ МОЖЕТ ВАРЬИРОВАТЬСЯ ОТ 1 РАБОЧЕГО ДНЯ ДО 3Х</small>
+        </p>
+    </div>
+
+<div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label style="margin-bottom: 10px;">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <div class="text-center" style="margin-top: 10px;">
+                <button type="submit" class="button">Заказать</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>
+{% endblock %}

@@ -4,6 +4,7 @@ class ArticlesForm(ModelForm):
     class Meta:
         model = Articles
         fields = ['number', 'mail', 'name', 'op', 'course', 'project_name', 'teach_name', 'phone', 'dmodel', 'note', 'comment', 'status']
+        exclude = ['comment', 'status']
         widgets = {
             "number": TextInput(attrs={
                 'class': 'text',
