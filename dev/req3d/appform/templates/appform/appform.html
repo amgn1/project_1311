@@ -91,7 +91,7 @@
 
 <div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
     <div class="form-container">
-        <form method="POST">
+        <form method="POST" action="{%  url 'add_data' %}" enctype="multipart/form-data">
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group">
