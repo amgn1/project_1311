@@ -33,7 +33,7 @@
     <div class="mt-auto">
         <nav class="navbar navbar-expand-lg", style="background-color: #d6e6ff; padding: 1.25% 5% 1.5% 5%">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="https://miem.hse.ru/">
                     <img src="{% static 'home/img/_svg.png' %}" width="110" height="28" alt="" loading="lazy">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvasLg" aria-controls="navbarOffcanvasLg">
@@ -67,7 +67,7 @@
                                 </li>
                             {% else %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="bi bi-box-arrow-in-right"></i> Войти</a>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authmodal" data-bs-dismiss="offcanvas"><i class="bi bi-box-arrow-in-right"></i> Войти</button>
                                 </li>
                             {% endif %}
                         </ul>
@@ -89,7 +89,7 @@
                 <div class="row mt-4">
                     <!--Grid column-->
                     <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="https://miem.hse.ru/">
                             <img src="{% static 'home/img/_svg.png' %}" width="110" height="28" alt="" loading="lazy">
                         </a>
                         
@@ -113,7 +113,7 @@
                                 <span class="fa-li"></span><span class="ms-2">123458, Москва, ул. Таллинская, д. 34</span>
                             </li>
                             <li class="mb-3">
-                                <span class="fa-li"></span><a href="#" class="link-light ms-2">imotajlenko@hse.ru</a>
+                                <span class="fa-li"></span><a href="mailto:imotajlenko@hse.ru" class="link-light ms-2">imotajlenko@hse.ru</a>
                             </li>
                             <li class="mb-3">
                                 <span class="fa-li"></span><span class="ms-2">Мотайленко Илья Александрович</span>
@@ -146,6 +146,42 @@
             <!-- Grid container -->
         </footer>
     </div>
-    
+
+    <div class="modal fade" id="authmodal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Авторизация</h4>
+            </div>
+            <div class="modal-body">
+          {% if user.is_authenticated %}
+              <form method="post">
+                {% csrf_token %}
+                <input type="submit" name="logout"/>
+              </form>
+          {% else %}
+              <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Email address</label>
+                    <input type="email" name="username" class="form-control" maxlength="30" id="id_username" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="id_password"/>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Войти</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
 </body>
 </html>

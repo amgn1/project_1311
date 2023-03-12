@@ -54,6 +54,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'req3d.urls'
 
+AUTHENTICATION_BACKENDS = [
+    'auth.BruteForceProtectedAuthBackend',
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
