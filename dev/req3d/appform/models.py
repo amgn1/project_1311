@@ -46,21 +46,18 @@ class Articles(models.Model):
     )
 
     number = models.CharField(max_length=20, unique=True, default=func, verbose_name='Номер заявки')
-    mail = models.EmailField('Электронная почта', max_length=100)
-    name = models.CharField('ФИО', max_length=50)
-    op = models.CharField('ОП', max_length=6, choices=GROUPS)
-    course = models.CharField('Курс', max_length=25, choices=COURSES)
-    project_name = models.CharField('Название проекта или КР/ВКР', max_length=50)
-    teach_name = models.CharField('ФИО Научного руководителя', max_length=50)
-    phone = models.CharField('Телефон', max_length=12)
-    dmodel = models.FileField('3D модель', upload_to='3dmodels/')
-    note = models.FileField('Скан служебной записки', upload_to='notes/')
-    comment = models.CharField('Комментарий к заявке', max_length=500, blank=True)
-    status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении', blank=True)
-
+    mail = models.EmailField('Электронная почта', max_length=100, blank=True)
+    name = models.CharField('ФИО', max_length=50, blank=True)
+    op = models.CharField('ОП', max_length=6, choices=GROUPS, blank=True)
+    course = models.CharField('Курс', max_length=25, choices=COURSES, blank=True)
+    project_name = models.CharField('Название проекта или КР/ВКР', max_length=50, blank=True)
+    teach_name = models.CharField('ФИО Научного руководителя', max_length=50, blank=True)
+    phone = models.CharField('Телефон', max_length=12, blank=True)
+    dmodel = models.FileField('3D модель', upload_to='3dmodels/', blank=True)
+    note = models.FileField('Скан служебной записки', upload_to='notes/', blank=True)
     def __str__(self):
         return self.name
-        
+
     class Meta:
         verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'

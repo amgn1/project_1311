@@ -35,18 +35,18 @@
         padding: 10px;
 		font-weight: normal;
     }
-    
+
     tr {
         height: 50px;
     }
-	
+
 	.text {
 		width: 100%;
 	}
     .form-group {
 		padding-bottom: 30px;
     }
-	
+
 	.form-group input {
 	    border: none;
 	    border-bottom: 1px solid #000;
@@ -54,7 +54,7 @@
 	    outline: none;
 	    font-size: 18px;
 	}
-	
+
 	.form-group select {
 	    border: none;
 	    border-bottom: 1px solid #000;
@@ -62,17 +62,17 @@
 	    outline: none;
 	    font-size: 18px;
 	}
-	
+
 	form label, form input, form select {
         font-size: 20px;
     }
-	
+
 	input[type="file"] {
 		border: none;
 		border-bottom: none;
 		outline: none;
 	}
-	
+
 	::placeholder {
 		opacity: 0.75; /* Opacity of the placeholder text */
 	}
@@ -91,7 +91,7 @@
 
 <div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
     <div class="form-container">
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group">
