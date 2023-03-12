@@ -55,6 +55,10 @@ class Articles(models.Model):
     phone = models.CharField('Телефон', max_length=12, blank=True)
     dmodel = models.FileField('3D модель', upload_to='3dmodels/', blank=True)
     note = models.FileField('Скан служебной записки', upload_to='notes/', blank=True)
+    comment = models.CharField('Комментарий к заявке', max_length=500, blank=True)
+    status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении', blank=True)
+
+
     def __str__(self):
         return self.name
 
