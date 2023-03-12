@@ -58,9 +58,10 @@ class Articles(models.Model):
     comment = models.CharField('Комментарий к заявке', max_length=500, blank=True)
     status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении', blank=True)
 
+
     def __str__(self):
         return self.name
-        
+
     class Meta:
         verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'
