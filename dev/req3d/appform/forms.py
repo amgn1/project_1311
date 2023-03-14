@@ -7,51 +7,64 @@ class ArticlesForm(ModelForm):
         exclude = ['comment', 'status']
         widgets = {
             "number": TextInput(attrs={
-                'class': 'text',
-                'readonly': 'True'
+                'class': 'form-control',
+                'readonly': 'True',
+                'required': ''
             }),
             "mail": EmailInput(attrs={
-                'class': 'text',
-                'placeholder': 'Электронная почта'
+                'class': 'form-control',
+                'placeholder': 'Электронная почта',
+                'required': ''
             }),
             "name": TextInput(attrs={
-                'class': 'text',
-                'placeholder': 'Фамилия Имя Отчество'
+                'class': 'form-control',
+                'placeholder': 'Фамилия Имя Отчество',
+                'required': ''
             }),
             "op": Select(attrs={
-                'class': 'text',
-                'placeholder': 'Образовательная программа'
+                'class': 'form-control',
+                'placeholder': 'Образовательная программа',
+                'required': ''
             }),
             "course": Select(attrs={
-                'class': 'text',
-                'placeholder': 'Курс'
+                'class': 'form-control',
+                'placeholder': 'Курс',
+                'required': ''
             }),
             "project_name": TextInput(attrs={
-                'class': 'text',
-                'placeholder': 'Название проекта/КР/ВКР'
+                'class': 'form-control',
+                'placeholder': 'Название проекта/КР/ВКР',
+                'required': ''
             }),
             "teach_name": TextInput(attrs={
-                'class': 'text',
-                'placeholder': 'ФИО Научного руководителя'
+                'class': 'form-control',
+                'placeholder': 'ФИО Научного руководителя',
+                'required': ''
             }),
             "phone": TextInput(attrs={
-                'class': 'text',
-                'placeholder': 'Телефон'
+                'class': 'form-control',
+                'placeholder': 'Телефон',
+                'required': ''
             }),
             "dmodel": FileInput(attrs={
-                'class': 'text',
-                'placeholder': '3D модель'
+                'class': 'form-control',
+                'placeholder': '3D модель',
+                'aria-label' : 'file example',
+                'required': ''
             }),
             "note": FileInput(attrs={
-                'class': 'text',
-                'placeholder': 'Скан служебной записки'
+                'class': 'form-control',
+                'placeholder': 'Скан служебной записки',
+                'required': ''
             }),
             "comment": TextInput(attrs={
-                'class': 'text',
-                'placeholder': 'Комментарий к заявке'
+                'class': 'form-control',
+                'placeholder': 'Комментарий к заявке',
+                'required': ''
             }),
             "status": Select(attrs={
-                'class': 'text',
-                'placeholder': 'Статус'
+                'class': 'form-control',
+                'placeholder': 'Статус',
+                'required': ''
             }),
         }

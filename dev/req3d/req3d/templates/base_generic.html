@@ -58,7 +58,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> Инструкция</a>
                             </li>
-                            {% if request.user.is_authenticated %}
+                            {% if user.is_authenticated %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'profile' %}">Profile</a>
                                 </li>
@@ -67,7 +67,8 @@
                                 </li>
                             {% else %}
                                 <li class="nav-item">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authmodal" data-bs-dismiss="offcanvas"><i class="bi bi-box-arrow-in-right"></i> Войти</button>
+                                    <button type="button" class="btn btn-primary" onclick="document.location='{% url 'oauth_login' %}'"><i class="bi bi-box-arrow-in-right"></i> Войти</button>
+                                    {% comment %} <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authmodal" data-bs-dismiss="offcanvas"><i class="bi bi-box-arrow-in-right"></i> Войти</button> {% endcomment %}
                                 </li>
                             {% endif %}
                         </ul>
@@ -147,7 +148,7 @@
         </footer>
     </div>
 
-    <div class="modal fade" id="authmodal" tabindex="-1">
+    {% comment %} <div class="modal fade" id="authmodal" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -160,28 +161,52 @@
                 <input type="submit" name="logout"/>
               </form>
           {% else %}
-              <form method="post">
+              <form method="post" class="row g-3 needs-validation" novalidate>
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="id_username" class="form-label">Email address</label>
-                    <input type="email" name="username" class="form-control" maxlength="30" id="id_username" aria-describedby="emailHelp">
-                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                <div class="mb-3 form-floating">
+                    <input type="email" name="username" class="form-control" maxlength="30" id="id_username" aria-describedby="emailHelp" placeholder='test@hse.ru' required>
+                    <label for="id_username" class="form-label">E-mail адрес</label>
+                    <div class="invalid-feedback">
+                        Пожалуйста, введите ваш e-mail.
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="id_password" class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" id="id_password"/>
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                <div class="form-floating">
+                    <input type="password" name="password" class="form-control" id="id_password" placeholder="Password" required>
+                    <label for="id_password" class="form-label">Пароль</label>
+                    <div class="invalid-feedback">
+                        Поле не может быть пустым.
+                    </div>
                 </div>
                 
-                <button type="submit" class="btn btn-primary">Войти</button>
+                <input type="submit" class="btn btn-primary" value="Войти"></input>
+                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+
               </form>
               {% endif %}
             </div>
           </div>
         </div>
-      </div>
+      </div> {% endcomment %}
+    <script>
+    (function () {
+        'use strict'
+    
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+    
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+    
+            form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+    </script>
 </body>
 </html>

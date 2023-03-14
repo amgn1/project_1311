@@ -16,10 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from appform.views import appform_view
-
+from django.conf.urls.static import static
+from django.conf import settings
+from oauth import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
-    path('appform/', include('appform.urls'))
-]
+    path('appform/', include('appform.urls')),
+    path('auth/user', views.get_authenticated_user, name='get_authenticated_user'),
+    # path('oauth2', views.home, name='oauth2'),
+    path('oauth2/login', views.discord_login, name='oauth_login'),
+    path('oauth2/login/redirect', views.discord_login_redirect, name='discord_login_redirect')
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

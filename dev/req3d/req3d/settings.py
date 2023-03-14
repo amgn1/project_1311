@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'appform.apps.AppformConfig',
     'home.apps.HomeConfig',
-    'django_bootstrap5'
+    'django_bootstrap5',
+    'oauth.apps.AuthConfig'
 ]
 
 MIDDLEWARE = [
@@ -55,7 +56,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'req3d.urls'
 
 AUTHENTICATION_BACKENDS = [
-    'auth.BruteForceProtectedAuthBackend',
+    'oauth.auth.DiscordAuthenticationBackend'
 ]
 
 TEMPLATES = [
