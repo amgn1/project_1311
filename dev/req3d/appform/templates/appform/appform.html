@@ -91,20 +91,27 @@
 
 <div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
     <div class="form-container">
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %}
             {% for field in form %}
-                <div class="form-group">
-                    <label style="margin-bottom: 10px;">{{ field.label }}</label>
+                <div class="form-group mb-3">
+                    <label class="form-label" style="margin-bottom: 10px;">{{ field.label }}</label>
                     {{ field }}
+					<div class="invalid-feedback">
+						Неверное/отсуствует значение.
+					</div>
                 </div>
             {% endfor %}
             <div class="text-center" style="margin-top: 10px;">
-                <button type="submit" class="button">Заказать</button>
+                <button type="submit" class="button" value="Send">Заказать</button>
             </div>
         </form>
     </div>
 </div>
 
 </div>
+
+
 {% endblock %}
+
+

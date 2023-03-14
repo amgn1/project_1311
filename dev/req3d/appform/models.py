@@ -53,14 +53,15 @@ class Articles(models.Model):
     project_name = models.CharField('Название проекта или КР/ВКР', max_length=50)
     teach_name = models.CharField('ФИО Научного руководителя', max_length=50)
     phone = models.CharField('Телефон', max_length=12)
-    dmodel = models.FileField('3D модель', upload_to='3dmodels/')
+    dmodel = models.FileField('3D модель', upload_to='3dmodels/', blank=False)
     note = models.FileField('Скан служебной записки', upload_to='notes/')
-    comment = models.CharField('Комментарий к заявке', max_length=500, blank=True)
-    status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении', blank=True)
+    comment = models.CharField('Комментарий к заявке', max_length=500)
+    status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении', blank=False)
+
 
     def __str__(self):
         return self.name
-        
+
     class Meta:
         verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'

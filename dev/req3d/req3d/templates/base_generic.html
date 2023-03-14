@@ -33,7 +33,7 @@
     <div class="mt-auto">
         <nav class="navbar navbar-expand-lg", style="background-color: #d6e6ff; padding: 1.25% 5% 1.5% 5%">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="https://miem.hse.ru/">
                     <img src="{% static 'home/img/_svg.png' %}" width="110" height="28" alt="" loading="lazy">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvasLg" aria-controls="navbarOffcanvasLg">
@@ -58,7 +58,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> Инструкция</a>
                             </li>
-                            {% if request.user.is_authenticated %}
+                            {% if user.is_authenticated %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'profile' %}">Profile</a>
                                 </li>
@@ -67,7 +67,8 @@
                                 </li>
                             {% else %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="bi bi-box-arrow-in-right"></i> Войти</a>
+                                    <button type="button" class="btn btn-primary" onclick="document.location='{% url 'oauth_login' %}'"><i class="bi bi-box-arrow-in-right"></i> Войти</button>
+                                    {% comment %} <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authmodal" data-bs-dismiss="offcanvas"><i class="bi bi-box-arrow-in-right"></i> Войти</button> {% endcomment %}
                                 </li>
                             {% endif %}
                         </ul>
@@ -89,7 +90,7 @@
                 <div class="row mt-4">
                     <!--Grid column-->
                     <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="https://miem.hse.ru/">
                             <img src="{% static 'home/img/_svg.png' %}" width="110" height="28" alt="" loading="lazy">
                         </a>
                         
@@ -113,7 +114,7 @@
                                 <span class="fa-li"></span><span class="ms-2">123458, Москва, ул. Таллинская, д. 34</span>
                             </li>
                             <li class="mb-3">
-                                <span class="fa-li"></span><a href="#" class="link-light ms-2">imotajlenko@hse.ru</a>
+                                <span class="fa-li"></span><a href="mailto:imotajlenko@hse.ru" class="link-light ms-2">imotajlenko@hse.ru</a>
                             </li>
                             <li class="mb-3">
                                 <span class="fa-li"></span><span class="ms-2">Мотайленко Илья Александрович</span>
@@ -146,6 +147,66 @@
             <!-- Grid container -->
         </footer>
     </div>
+
+    {% comment %} <div class="modal fade" id="authmodal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Авторизация</h4>
+            </div>
+            <div class="modal-body">
+          {% if user.is_authenticated %}
+              <form method="post">
+                {% csrf_token %}
+                <input type="submit" name="logout"/>
+              </form>
+          {% else %}
+              <form method="post" class="row g-3 needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="mb-3 form-floating">
+                    <input type="email" name="username" class="form-control" maxlength="30" id="id_username" aria-describedby="emailHelp" placeholder='test@hse.ru' required>
+                    <label for="id_username" class="form-label">E-mail адрес</label>
+                    <div class="invalid-feedback">
+                        Пожалуйста, введите ваш e-mail.
+                    </div>
+                </div>
+                <div class="form-floating">
+                    <input type="password" name="password" class="form-control" id="id_password" placeholder="Password" required>
+                    <label for="id_password" class="form-label">Пароль</label>
+                    <div class="invalid-feedback">
+                        Поле не может быть пустым.
+                    </div>
+                </div>
+                
+                <input type="submit" class="btn btn-primary" value="Войти"></input>
+                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div> {% endcomment %}
+    <script>
+    (function () {
+        'use strict'
     
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+    
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+    
+            form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+    </script>
 </body>
 </html>
