@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.crypto import get_random_string
+import oauth.models as users
 
 # Create your models here.
 
@@ -46,6 +47,7 @@ class Articles(models.Model):
     )
 
     number = models.CharField(max_length=20, unique=True, default=func, verbose_name='Номер заявки')
+    user = models.ForeignKey(users.DiscordUser, on_delete=models.PROTECT)
     mail = models.EmailField('Электронная почта', max_length=100)
     name = models.CharField('ФИО', max_length=50)
     op = models.CharField('ОП', max_length=6, choices=GROUPS)
