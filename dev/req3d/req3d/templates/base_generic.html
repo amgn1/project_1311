@@ -58,12 +58,15 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> Инструкция</a>
                             </li>
-                            {% if user.is_authenticated %}
+
+                            {% if user.discord_tag %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                                    {% comment %} <a class="nav-link" href="{% url 'profile' %}">Profile</a> {% endcomment %}
+                                    <a class="nav-link" href="#"><i class="bi bi-person-fill"></i> Профиль</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                                    {% comment %} <a class="nav-link" href="{% url 'logout' %}">Logout</a> {% endcomment %}
+                                    <button type="button" class="btn btn-primary" onclick="document.location='{% url 'oauth_logout' %}'"><i class="bi bi-box-arrow-right"></i> Выйти</a>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
@@ -71,6 +74,7 @@
                                     {% comment %} <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authmodal" data-bs-dismiss="offcanvas"><i class="bi bi-box-arrow-in-right"></i> Войти</button> {% endcomment %}
                                 </li>
                             {% endif %}
+                            
                         </ul>
                     </div>
                 </div>
