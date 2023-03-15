@@ -45,7 +45,11 @@ def discord_login_redirect(request: HttpRequest):
   print(code)
   user = exchange_code(code)
   discord_user = authenticate(request, user=user)
-  discord_user = list(discord_user).pop()
+  try:
+      discord_user = list(discord_user).pop()
+  except TypeError:
+      print(discord_user)
+
   print(discord_user)
   login(request, discord_user)
   return redirect(next_url)

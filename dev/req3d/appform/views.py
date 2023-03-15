@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 def appform_view(request):
     if request.method == 'POST':
         mail = request.POST['mail']
+
         name = request.POST['name']
         op = request.POST['op']
         course = request.POST['course']
@@ -19,7 +20,7 @@ def appform_view(request):
         dmodel = request.FILES['dmodel']
         note = request.FILES['note']
         if mail and name:
-            data = Articles(mail=mail, name=name, op=op, course=course, project_name=project_name, teach_name=teach_name,phone=phone, dmodel=dmodel, note=note)
+            data = Articles(mail=mail, name=name, op=op, course=course, project_name=project_name, teach_name=teach_name,phone=phone, dmodel=dmodel, note=note, user_id=request.user.id)
             data.save()
             return render(request,'home/index.html')
     else:
