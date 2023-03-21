@@ -9,62 +9,62 @@ class ArticlesForm(ModelForm):
             "number": TextInput(attrs={
                 'class': 'form-control',
                 'readonly': 'True',
-                'required': ''
+                'required': 'True'
             }),
             "mail": EmailInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Электронная почта',
-                'required': ''
+                'required': 'True'
             }),
             "name": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Фамилия Имя Отчество',
-                'required': ''
+                'required': 'True'
             }),
             "op": Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Образовательная программа',
-                'required': ''
+                'required': 'True'
             }),
             "course": Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Курс',
-                'required': ''
+                'required': 'True'
             }),
             "project_name": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Название проекта/КР/ВКР',
-                'required': ''
+                'required': 'True'
             }),
             "teach_name": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'ФИО Научного руководителя',
-                'required': ''
+                'required': 'True'
             }),
             "phone": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Телефон',
-                'required': ''
+                'required': 'True'
             }),
             "dmodel": FileInput(attrs={
                 'class': 'form-control',
                 'placeholder': '3D модель',
                 'aria-label' : 'file example',
-                'required': ''
+                'required': 'True'
             }),
             "note": FileInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Скан служебной записки',
-                'required': ''
+                'required': 'True'
             }),
             "comment": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Комментарий к заявке',
-                'required': ''
+                'required': 'True'
             }),
             "status": Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Статус',
-                'required': ''
+                'required': 'True'
             }),
         }

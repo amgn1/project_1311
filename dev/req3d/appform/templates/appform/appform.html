@@ -91,14 +91,15 @@
 
 <div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
     <div class="form-container">
-        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+			<div class="invalid-feedback"> {{ form.non_field_errors}} </div>
             {% for field in form %}
                 <div class="form-group mb-3">
-                    <label class="form-label" style="margin-bottom: 10px;">{{ field.label }}</label>
+                    <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
                     {{ field }}
-					<div class="invalid-feedback">
-						Неверное/отсуствует значение.
+					<div class="valid-feedback">
+						{{ field.errors }}
 					</div>
                 </div>
             {% endfor %}

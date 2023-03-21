@@ -11,11 +11,10 @@ def validate_phone(value):
     pattern = r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$'
     if not re.match(pattern, value):
         raise ValidationError("Неверный номер телефона, формат ввода: +7|8|7 9XXXXXXXXX")
-    if not value.isdigit():
-        raise ValidationError("Номер телефона должен состоять только из цифр")
+
 
 def validate_mail(value):
-    with open('static/spam_emails.txt', 'r') as f:
+    with open('appform/static/spam_emails.txt', 'r') as f:
         for line in f:
             if line.startswith(value):
                 raise ValidationError("Спам почта")
@@ -45,11 +44,9 @@ def validate_teach_name(value):
         raise ValidationError("ФИО может состоять только из букв")
 
 def validate_dmodel(value):
-    value = value.name.split(".")
-    if value[1] == 'txt':
+    if not value.name.endswith(".png"):
         raise ValidationError("Некорректный тип файла")
 
 def validate_note(value):
-    value = value.name.split(".")
-    if value[1] == 'txt':
+    if not value.name.endswith(".png"):
         raise ValidationError("Некорректный тип файла")
