@@ -25,5 +25,6 @@ urlpatterns = [
     path('', include('home.urls')),
     path('appform/', include('appform.urls')),
     # path('auth/user', views.get_authenticated_user, name='get_authenticated_user'),
-    path('oauth2/', include('oauth.urls'))
+    path('oauth2/', include('oauth.urls')),
+    path('instructions/', include('instructions.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

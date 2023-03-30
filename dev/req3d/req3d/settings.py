@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'appform.apps.AppformConfig',
     'home.apps.HomeConfig',
     'django_bootstrap5',
-    'oauth.apps.AuthConfig'
+    'oauth.apps.AuthConfig',
+    'instructions'
 ]
 
 MIDDLEWARE = [
