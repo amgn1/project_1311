@@ -12,7 +12,10 @@ def appform_view(request):
         form = ArticlesForm(request.POST, request.FILES)
         context = {'form': form}
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            instance.user_id = request.user.id
+            instance.save()
+
             return render(request,'home/index.html')
     else:
         form = ArticlesForm()
