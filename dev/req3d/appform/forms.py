@@ -1,6 +1,10 @@
-from .models import Articles
+from .models import *
 from django.forms import ModelForm, TextInput, EmailInput, Select, FileInput, HiddenInput
 class ArticlesForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ArticlesForm, self).__init__(*args, **kwargs)
+        self.fields['op'].empty_label = 'Направление не выбрано'
+        self.fields['course'].empty_label = 'Курс не выбран'
     class Meta:
         model = Articles
         fields = ['number', 'mail', 'name', 'op', 'course', 'project_name', 'teach_name', 'phone', 'dmodel', 'note', 'comment', 'status']

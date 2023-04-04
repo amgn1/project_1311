@@ -1,6 +1,8 @@
 {% extends 'base_generic.html' %}
 {% block title %}3D MIEM{% endblock %}
 {% block content %}
+{% load widget_tweaks %}
+
 
 <style>
     .center {
@@ -93,14 +95,19 @@
     <div class="form-container">
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-			<div class="invalid-feedback"> {{ form.non_field_errors}} </div>
             {% for field in form %}
-                <div class="form-group mb-3">
+                <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
                     <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
-                    {{ field }}
-					<div class="valid-feedback">
-						{{ field.errors }}
+					{% if field.errors %}
+					{{ field|add_class:"is-invalid" }}
+					<div class="invalid-feedback">
+						{% for error in field.errors %}
+							{{ error }}
+						{% endfor %}
 					</div>
+					{% else %}
+					{{ field }}
+					{% endif %}
                 </div>
             {% endfor %}
             <div class="text-center" style="margin-top: 10px;">
