@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'oauth.apps.AuthConfig',
     'status_check',
-    'instructions'
+    'instructions',
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [

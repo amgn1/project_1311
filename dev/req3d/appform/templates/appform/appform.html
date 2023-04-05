@@ -1,6 +1,8 @@
 {% extends 'base_generic.html' %}
 {% block title %}3D MIEM{% endblock %}
 {% block content %}
+{% load widget_tweaks %}
+
 
 <style>
     .center {
@@ -91,15 +93,21 @@
 
 <div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
     <div class="form-container">
-        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {% for field in form %}
-                <div class="form-group mb-3">
-                    <label class="form-label" style="margin-bottom: 10px;">{{ field.label }}</label>
-                    {{ field }}
+                <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
+                    <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
+					{% if field.errors %}
+					{{ field|add_class:"is-invalid" }}
 					<div class="invalid-feedback">
-						Неверное/отсуствует значение.
+						{% for error in field.errors %}
+							{{ error }}
+						{% endfor %}
 					</div>
+					{% else %}
+					{{ field }}
+					{% endif %}
                 </div>
             {% endfor %}
             <div class="text-center" style="margin-top: 10px;">
