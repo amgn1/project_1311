@@ -61,6 +61,7 @@ ROOT_URLCONF = 'req3d.urls'
 AUTHENTICATION_BACKENDS = [
     'oauth.auth.DiscordAuthenticationBackend'
 ]
+AUTH_USER_MODEL = 'oauth.DiscordUser'
 
 TEMPLATES = [
     {
