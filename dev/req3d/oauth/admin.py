@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
@@ -31,4 +31,4 @@ class DiscordUserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 admin.site.register(DiscordUser, DiscordUserAdmin)
-
+admin.site.unregister(Group)

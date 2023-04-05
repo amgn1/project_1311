@@ -6,6 +6,8 @@ from .managers import DiscordUserOAuth2Manager
 class DiscordUser(models.Model):
   class Meta:
     db_table = 'auth_user'
+    verbose_name = 'Пользователя'
+    verbose_name_plural = 'Пользователи'
   objects = DiscordUserOAuth2Manager()
   
   id = models.BigIntegerField(primary_key=True)

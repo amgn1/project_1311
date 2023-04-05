@@ -51,7 +51,7 @@ class Articles(models.Model):
     )
 
     number = models.CharField(max_length=20, unique=True, default=func, verbose_name='Номер заявки')
-    user = models.ForeignKey(users.DiscordUser, on_delete=models.PROTECT)
+    user = models.ForeignKey(users.DiscordUser, on_delete=models.PROTECT, verbose_name='Пользователь')
     mail = models.EmailField('Электронная почта', max_length=100, validators=[validate_mail])
     name = models.CharField('ФИО', max_length=50, validators=[validate_name])
     op = models.CharField('ОП', max_length=6, choices=GROUPS, validators=[validate_op])
@@ -61,7 +61,7 @@ class Articles(models.Model):
     phone = models.CharField('Телефон', max_length=20, validators=[validate_phone])
     dmodel = models.FileField('3D модель', upload_to='3dmodels/', validators=[validate_dmodel])
     note = models.FileField('Скан служебной записки', upload_to='notes/', validators=[validate_note])
-    comment = models.CharField('Комментарий к заявке', max_length=500, validators=[])
+    comment = models.CharField('Комментарий к заявке', max_length=500, validators=[], blank=True, null=True)
     status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении')
 
 
