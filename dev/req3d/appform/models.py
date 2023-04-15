@@ -63,6 +63,7 @@ class Articles(models.Model):
     note = models.FileField('Скан служебной записки', upload_to='notes/', validators=[validate_note])
     comment = models.CharField('Комментарий к заявке', max_length=500, validators=[], blank=True, null=True)
     status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении')
+    time_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
 
 
     def __str__(self):

@@ -23,9 +23,9 @@ from oauth import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
-    path('appform/', include('appform.urls')),
+    path('request/', include('appform.urls')),
     # path('auth/user', views.get_authenticated_user, name='get_authenticated_user'),
     path('oauth2/', include('oauth.urls')),
-    path('status_check/', include('status_check.urls')),
+    path('status/', include('status_check.urls')),
     path('instructions/', include('instructions.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
