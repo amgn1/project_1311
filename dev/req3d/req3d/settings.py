@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'oauth.apps.AuthConfig',
     'status_check',
     'instructions',
-    'widget_tweaks'
+    'widget_tweaks',
+    'telegram_bot_app'
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,6 @@
 {% extends 'base_generic.html' %}
 {% load static %}
+{% load widget_tweaks %}
 {% block title %}3D MIEM{% endblock %}
 
 {% block content %}
@@ -16,8 +17,8 @@
     </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-auto" style='margin: auto'>
-        {% for obj in data %}
-        <div class="col">
+        {% for obj, form in send_data %}
+        <div class="col" id="card_{{obj.pk}}">
             <div class="card h-100">
                 <div id="{{obj.number}}">
                     {% comment %} <img src="{{obj.dmodel}}" class="card-img-top" alt="Skyscrapers"/> {% endcomment %}
@@ -34,9 +35,80 @@
                         <b>Комментарий проверяющего:</b> {{obj.comment}} <br>
                         {% endif %}
 
-
                     </p>
-                    <a href="#" class="btn btn-primary">Изменить</a>
+                    
+                    <!-- Button trigger update modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{obj.number}}">
+                        Изменить
+                    </button>
+                        
+                    <!-- Button trigger delete modal -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{obj.number}}">
+                        Удалить
+                    </button>
+                         
+                    <!-- Modal Update -->
+                    <div class="modal fade" id="Modal{{obj.number}}" tabindex="-1" aria-labelledby="Modal{{obj.number}}Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Modal{{obj.number}}Label">Изменение заявки №{{obj.number}}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                {% comment %} <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}"> {% endcomment %}
+                                    <div class="modal-body">
+                                        <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}">
+                                            {% csrf_token %}
+                                        <div class="form-container">
+                                            <input type="hidden" name="object_id" value="{{obj.pk}}">
+                                            {% for field in form %}
+                                                <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
+                                                    <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
+                                                    {% if field.errors %}
+                                                    {{ field|add_class:"is-invalid" }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in field.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ field }}
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </form>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                        <input class="btn btn-primary" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
+                                    </div>
+                                {% comment %} </form> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Delete -->
+                    <div class="modal fade" id="deleteModal{{obj.number}}" tabindex="-1" aria-labelledby="deleteModal{{obj.number}}Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModal{{obj.number}}Label">Удаление заявки №{{obj.number}}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Вы действительно хотите продолжить? Изменения необратимы.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                    <form action="{% url 'delete-req' obj.pk %}" method="POST" id="delete_form_{{ obj.pk }}">
+                                        {% csrf_token %}
+                                        <input class="btn btn-danger" type="button" onclick=submit_delete({{ obj.pk }}) value="Удалить">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">Последний раз обновлена {{obj.time_created}}</small>
@@ -46,6 +118,54 @@
         {% endfor %}
     </div>
 </div>
+
+<script src="{% static 'home/js/jquery-3.6.4.min.js' %}"></script>
+<script>
+    function submit_delete(id) {
+        $.ajax({
+            type: $('#delete_form_'+id).attr('method'),
+            url: $('#delete_form_'+id).attr('action'),
+            data: $('#delete_form_'+id).serialize(),
+            success: function (data) {
+                $('#card_'+id).remove();location.reload();
+            }
+        });
+    }
+</script>
+
+<script>
+    {% comment %} $('.my-form').submit(function(event) {
+        event.preventDefault();
+        var $form = $(this);
+        var form_id = $form.data('form-id');
+        var form_data = $form.serialize();
+        $.ajax({
+            тип: 'POST',
+            URL: $('#delete_form_'+id).attr('action'),
+            data: form_data + '&form_id=' + form_id,
+            success: function (response) {
+            },
+            error: function (response) {
+                // обработка ошибки
+            }
+        });
+    }); {% endcomment %}
+
+
+    function submitForm(formId) {
+        var form = document.getElementById(formId);
+        var formData = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action, true);
+        xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.onload = function() {
+            // Здесь обрабатывается ответ - TODO
+        };
+        xhr.send(formData);
+    }
+
+</script>
 
 <script src="{% static 'home/js/three.js' %}"></script>
 <script src="{% static 'home/js/STLLoader.js' %}"></script>
@@ -79,7 +199,7 @@
             var material = new THREE.MeshStandardMaterial({
                 color: 0x551A8,
                 roughness: 0.5,
-                metalness: 0
+                metalness: 0.5
             });
             var mesh = new THREE.Mesh(geometry, material);
             mesh.rotation.set(0, -Math.PI / 2, 0);
