@@ -6,12 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='icon' href="{% static 'home/img/3d.png' %}" type='image/x-icon'>
+    <link rel='stylesheet' href="{% static 'home/css/styles.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+        rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
+        rel="stylesheet"
+    />
     {% comment %} Bootstrap CSS {% endcomment %}
     
     {% load django_bootstrap5 %}
 
-    {% bootstrap_css %}
+    {% comment %} {% bootstrap_css %} {% endcomment %}
 
     {% bootstrap_javascript %}
 
@@ -19,16 +35,8 @@
 
     <title>{% block title %}{% endblock %}</title>
 
-
-    {% comment %} {% if user.is_authenticated %}
-    <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
-    <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
-  {% else %}
-    <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
-    <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
-  {% endif %} {% endcomment %}
-
 </head>
+
 <body class="d-flex flex-column min-vh-100">
     <div class="mt-auto">
         <nav class="navbar navbar-expand-lg", style="background-color: #d6e6ff; padding: 1.25% 5% 1.5% 5%">
@@ -45,32 +53,67 @@
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3", style="padding: 1% 1% 1% 1%">
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="{% url 'home' %}"><i class="bi bi-house"></i> Главная</a>
+                                <a class="nav-link {% if request.get_full_path == "/" %}active{% endif %}" aria-current="page" href="{% url 'home' %}"> Главная</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'appform' %}"><i class="bi bi-pencil-square"></i> Подать заявку</a>
+                                <a class="nav-link {% if request.get_full_path == "/request/" %}active{% endif %}" href="{% url 'appform' %}"> Подать заявку</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'status_check' %}"><i class="bi bi-question-octagon"></i> Статус заказа</a>
+                                <a class="nav-link {% if request.get_full_path == "/status/" %}active{% endif %}" href="{% url 'status_check' %}"> Статус заказа</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'instructions' %}"><i class="bi bi-clipboard-check"></i> Инструкция</a>
+                                <a class="nav-link {% if request.get_full_path == "/instructions/" %}active{% endif %}" href="{% url 'instructions' %}"> Инструкция</a>
                             </li>
 
                             {% if user.discord_tag %}
-                                <li class="nav-item">
-                                    {% comment %} <a class="nav-link" href="{% url 'profile' %}">Profile</a> {% endcomment %}
-                                    <a class="nav-link" href="#"><i class="bi bi-person-fill"></i> Профиль</a>
+                                {% comment %} <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'profile' %}"><i class="bi bi-person-fill"></i> Профиль</a>
                                 </li>
-                                <li class="nav-item">
-                                    {% comment %} <a class="nav-link" href="{% url 'logout' %}">Logout</a> {% endcomment %}
-                                    <button type="button" class="btn btn-primary" onclick="document.location='{% url 'oauth_logout' %}'"><i class="bi bi-box-arrow-right"></i> Выйти</a>
-                                </li>
+                                <li class="nav-item d-flex pt-1">
+                                    <button type="button" class="btn btn-primary flex-grow-1" onclick="document.location='{% url 'oauth_logout' %}'"><i class="bi bi-box-arrow-right"></i> Выйти</a>
+                                </li> {% endcomment %}
+                                
+                                <div class="dropdown d-flex">
+                                    <span
+                                        class="dropdown-toggle d-flex align-items-center hidden-arrow border border-primary border-3 rounded-9 p-1 bg-primary bg-gradient text-white shadow-3-strong"
+                                        href="#"
+                                        id="navbarDropdownMenuAvatar"
+                                        role="button"
+                                        data-mdb-toggle="dropdown"
+                                        aria-expanded="false"
+                                        style="padding: 1% 1% 1% 1%"
+                                    >
+                                        <img
+                                            src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png"
+                                            class="rounded-circle"
+                                            height="25"
+                                            loading="lazy"
+                                        />
+                                        {{ user.discord_tag }}
+                                    </span>
+                                    <ul
+                                        class="dropdown-menu dropdown-menu-end align-items-center"
+                                        aria-labelledby="navbarDropdownMenuAvatar"
+                                    >
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{% url 'profile' %}"><i class="bi bi-person-fill"></i> Профиль</a>
+                                        </li>
+                                        {% if user.is_admin %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/admin/"><i class="fas fa-users-gear"></i> Управление</a>
+                                        </li>
+                                        {% endif %}
+                                        <li class="nav-item d-flex pt-1">
+                                            <button type="button" class="btn btn-primary flex-grow-1" onclick="document.location='{% url 'oauth_logout' %}'"><i class="bi bi-box-arrow-right"></i> Выйти</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
                             {% else %}
-                                <li class="nav-item">
-                                    <button type="button" class="btn btn-primary" onclick="document.location='{% url 'oauth_login' %}'"><i class="bi bi-box-arrow-in-right"></i> Войти</button>
+                                <li class="nav-item d-flex pt-1">
+                                    <button type="button" class="btn btn-primary flex-grow-1" onclick="document.location='{% url 'oauth_login' %}'"><i class="bi bi-box-arrow-in-right"></i> Войти</button>
                                     {% comment %} <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authmodal" data-bs-dismiss="offcanvas"><i class="bi bi-box-arrow-in-right"></i> Войти</button> {% endcomment %}
                                 </li>
                             {% endif %}
@@ -104,7 +147,7 @@
     
                         <div class="mt-4">
                             <!-- Telegram -->
-                            <a type="button" class="btn btn-floating btn-light btn-lg" href='#'><i class="bi bi-telegram"></i> Telegram Bot</a>
+                            <a type="button" class="btn btn-primary btn-rounded btn-lg shadow-3-strong" href='#'><i class="bi bi-telegram"></i> Telegram Bot</a>
                         </div>
                     </div>
                     <!--Grid column-->
@@ -115,7 +158,7 @@
     
                         <ul class="fa-ul text-left" style='list-style-type: none; margin-left: -40px'>
                             <li class="mb-3">
-                                <span class="fa-li"></span><span class="ms-2">123458, Москва, ул. Таллинская, д. 34</span>
+                                <address class="fa-li"></address><address class="ms-2">123458, Москва, ул. Таллинская, д. 34</address>
                             </li>
                             <li class="mb-3">
                                 <span class="fa-li"></span><a href="mailto:imotajlenko@hse.ru" class="link-light ms-2">imotajlenko@hse.ru</a>
@@ -134,12 +177,12 @@
                         <table class="table text-center text-white">
                             <tbody class="fw-normal">
                                 <tr>
-                                    <td>Пн - Пт:</td>
-                                    <td>8:00 - 21:00</td>
+                                    <td><i class="fas fa-calendar-check"></i> Пн - Пт:</td>
+                                    <td><i class="far fa-clock me-2"></i> 8:00 - 21:00</td>
                                 </tr>
                                 <tr>
-                                    <td>Сб - Вс:</td>
-                                    <td>9:00 - 22:00</td>
+                                    <td><i class="fas fa-calendar-check"></i> Сб - Вс:</td>
+                                    <td><i class="far fa-clock me-2"></i> 9:00 - 22:00</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -152,65 +195,10 @@
         </footer>
     </div>
 
-    {% comment %} <div class="modal fade" id="authmodal" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Авторизация</h4>
-            </div>
-            <div class="modal-body">
-          {% if user.is_authenticated %}
-              <form method="post">
-                {% csrf_token %}
-                <input type="submit" name="logout"/>
-              </form>
-          {% else %}
-              <form method="post" class="row g-3 needs-validation" novalidate>
-                {% csrf_token %}
-                <div class="mb-3 form-floating">
-                    <input type="email" name="username" class="form-control" maxlength="30" id="id_username" aria-describedby="emailHelp" placeholder='test@hse.ru' required>
-                    <label for="id_username" class="form-label">E-mail адрес</label>
-                    <div class="invalid-feedback">
-                        Пожалуйста, введите ваш e-mail.
-                    </div>
-                </div>
-                <div class="form-floating">
-                    <input type="password" name="password" class="form-control" id="id_password" placeholder="Password" required>
-                    <label for="id_password" class="form-label">Пароль</label>
-                    <div class="invalid-feedback">
-                        Поле не может быть пустым.
-                    </div>
-                </div>
-                
-                <input type="submit" class="btn btn-primary" value="Войти"></input>
-                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-
-              </form>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-      </div> {% endcomment %}
-    {% comment %} <script>
-    (function () {
-        'use strict'
-    
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.querySelectorAll('.needs-validation')
-    
-        // Loop over them and prevent submission
-        Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
-    
-            form.classList.add('was-validated')
-            }, false)
-        })
-    })()
-    </script> {% endcomment %}
+<!-- MDB -->
+<script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
+></script>
 </body>
 </html>

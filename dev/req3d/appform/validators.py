@@ -44,9 +44,9 @@ def validate_teach_name(value):
         raise ValidationError("ФИО может состоять только из букв")
 
 def validate_dmodel(value):
-    if not value.name.endswith(".png"):
+    if not value.name.endswith(".stl"):
         raise ValidationError("Некорректный тип файла")
 
 def validate_note(value):
-    if not value.name.endswith(".png"):
+    if not value.name.endswith(".txt"):
         raise ValidationError("Некорректный тип файла")

@@ -1,0 +1,333 @@
+{% extends 'base_generic.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}3D MIEM{% endblock %}
+
+{% block content %}
+
+<div class="mt-auto" style="padding: 5% 0 10% 0;">
+    <div class="container p-4">
+        <p class='text-center mb-4 display-6'>
+            <strong>Ваши поданные заявки</strong>
+            <br>
+        </p>
+        <p class='text-center mb-4 fs-4'>
+            <small class="text-muted">На карточках ниже приведена краткая сводка информации о ваших заявках. В соответствии с цветом обводки карточки Вы можете узнать стутус вашей заявки. Вы можете получить подробную информацию или изменить конкретную заявку кликнув соответствующие кнопки.</small>
+        </p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-auto" style='margin: auto'>
+        {% for obj, form in send_data %}
+        <div class="col" id="card_{{obj.pk}}">
+            <div class="card h-100">
+                <div id="{{obj.number}}">
+                    {% comment %} <img src="{{obj.dmodel}}" class="card-img-top" alt="Skyscrapers"/> {% endcomment %}
+                    <canvas id="{{obj.number}}a"></canvas>
+                        <!-- Сюда помещается 3д-модель -->
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Заявка №{{obj.number}}</h5>
+                    <p class="card-text">
+                        <b>Проект:</b> {{obj.project_name}} <br>
+                        <b>Руководитель проекта:</b> {{obj.teach_name}} <br>
+                        <b>Cтатус:</b> {{obj.status}} <br>
+                        {% if obj.comment %}
+                        <b>Комментарий проверяющего:</b> {{obj.comment}} <br>
+                        {% endif %}
+
+                    </p>
+                    
+                    <!-- Button trigger update modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{obj.number}}">
+                        Изменить
+                    </button>
+                        
+                    <!-- Button trigger delete modal -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{obj.number}}">
+                        Удалить
+                    </button>
+                         
+                    <!-- Modal Update -->
+                    <div class="modal fade" id="Modal{{obj.number}}" tabindex="-1" aria-labelledby="Modal{{obj.number}}Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Modal{{obj.number}}Label">Изменение заявки №{{obj.number}}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                {% comment %} <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}"> {% endcomment %}
+                                    <div class="modal-body">
+                                        <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}">
+                                            {% csrf_token %}
+                                        <div class="form-container">
+                                            <input type="hidden" name="object_id" value="{{obj.pk}}">
+                                            {% for field in form %}
+                                                <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
+                                                    <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
+                                                    {% if field.errors %}
+                                                    {{ field|add_class:"is-invalid" }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in field.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ field }}
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </form>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                        <input class="btn btn-primary" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
+                                    </div>
+                                {% comment %} </form> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Delete -->
+                    <div class="modal fade" id="deleteModal{{obj.number}}" tabindex="-1" aria-labelledby="deleteModal{{obj.number}}Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModal{{obj.number}}Label">Удаление заявки №{{obj.number}}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Вы действительно хотите продолжить? Изменения необратимы.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                    <form action="{% url 'delete-req' obj.pk %}" method="POST" id="delete_form_{{ obj.pk }}">
+                                        {% csrf_token %}
+                                        <input class="btn btn-danger" type="button" onclick=submit_delete({{ obj.pk }}) value="Удалить">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Последний раз обновлена {{obj.time_created}}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{% static 'home/js/jquery-3.6.4.min.js' %}"></script>
+<script>
+    function submit_delete(id) {
+        $.ajax({
+            type: $('#delete_form_'+id).attr('method'),
+            url: $('#delete_form_'+id).attr('action'),
+            data: $('#delete_form_'+id).serialize(),
+            success: function (data) {
+                $('#card_'+id).remove();location.reload();
+            }
+        });
+    }
+</script>
+
+<script>
+    {% comment %} $('.my-form').submit(function(event) {
+        event.preventDefault();
+        var $form = $(this);
+        var form_id = $form.data('form-id');
+        var form_data = $form.serialize();
+        $.ajax({
+            тип: 'POST',
+            URL: $('#delete_form_'+id).attr('action'),
+            data: form_data + '&form_id=' + form_id,
+            success: function (response) {
+            },
+            error: function (response) {
+                // обработка ошибки
+            }
+        });
+    }); {% endcomment %}
+
+
+    function submitForm(formId) {
+        var form = document.getElementById(formId);
+        var formData = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action, true);
+        xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.onload = function() {
+            // Здесь обрабатывается ответ - TODO
+        };
+        xhr.send(formData);
+    }
+
+</script>
+
+<script src="{% static 'home/js/three.js' %}"></script>
+<script src="{% static 'home/js/STLLoader.js' %}"></script>
+<script src="{% static 'home/js/WebGL.js' %}"></script>
+
+<script>
+
+    function rendererCommon(canvas, model) {
+        
+        // Variabels, do not change
+        var cameraFov = 45;
+        var cameraTarget;
+
+
+        // 3D Model Process
+        if (WEBGL.isWebGLAvailable() === false) {
+            document.body.appendChild(WEBGL.getWebGLErrorMessage());
+        }
+
+        // Creating a Scene
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xB0DFE5);
+
+        // Creating a Camera
+        var camera = new THREE.PerspectiveCamera(cameraFov, document.getElementById(canvas).clientWidth / document.getElementById(canvas).clientHeight, 1, 15);
+        cameraTarget = new THREE.Vector3(0, 0, 0);
+            
+        // STL Loader - Model
+        var loader = new THREE.STLLoader();
+        loader.load(model, function(geometry) {
+            var material = new THREE.MeshStandardMaterial({
+                color: 0x551A8,
+                roughness: 0.5,
+                metalness: 0.5
+            });
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.rotation.set(0, -Math.PI / 2, 0);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+
+            // Initial Position and Scale
+            var bboxInit = new THREE.Box3().setFromObject(mesh);
+
+            // Model width and height
+            // Get x and y value from the model
+
+            // width, x
+            var negX = bboxInit.min[Object.keys(bboxInit.min)[0]];
+            var posX = bboxInit.max[Object.keys(bboxInit.max)[0]];
+            var modelWidth = posX - (negX);
+
+            // height, y
+            var negY = bboxInit.min[Object.keys(bboxInit.min)[1]];
+            var posY = bboxInit.max[Object.keys(bboxInit.max)[1]];
+            var modelHeight = posY - (negY);
+
+            if (modelWidth >= modelHeight) {
+                // Scale based on the width
+                var scaleFactor = 2 / modelWidth;
+            }
+            else {
+                // Scale based on the height
+                // Tall models need more scaling somehows
+                var scaleFactor = 1.5 / modelHeight;
+            }
+            
+            // Adjust scale
+            mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+            var bbox = new THREE.Box3().setFromObject(mesh);
+
+            // After scale, new dimensions!
+
+            // New height, y
+            var newNegY = bbox.min[Object.keys(bbox.min)[1]];
+            var newPosY = bbox.max[Object.keys(bbox.max)[1]];
+            var newModelHeight = newPosY - (newNegY);
+
+            // Adjust height position
+            var missingY = (newModelHeight / 2) - newPosY;
+
+            var heightAdjust = missingY;
+            mesh.position.set(0, heightAdjust, 0);
+
+            // Compute bounding box, shows the vectors of the boundingBox
+            var bbbox = new THREE.Box3().setFromObject(mesh);
+
+            scene.add(mesh);
+
+        });
+        // Adding some Lights
+        // HemisphereLight
+        scene.add(new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 ));
+
+        // AmbientLight
+        var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+        scene.add( light );
+
+        // DirectionalLight
+        var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+        scene.add( directionalLight );
+
+        // SpotLight
+        var spotLight = new THREE.SpotLight( 0x404040 );
+        spotLight.position.set( 100, 1000, 100 );
+        spotLight.castShadow = true;
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        spotLight.shadow.camera.near = 500;
+        spotLight.shadow.camera.far = 4000;
+        spotLight.shadow.camera.fov = 30;
+        scene.add( spotLight ); 
+
+        //WINDOW RESIZE FUNCTION 
+    
+        window.addEventListener("resize", onWindowResize);
+    
+        function onWindowResize() {
+    
+            camera.aspect = (document.getElementById(canvas).clientWidth) / (document.getElementById(canvas).clientHeight);
+    
+            camera.updateProjectionMatrix();
+            renderer.setSize(document.getElementById(canvas).clientWidth, document.getElementById(canvas).clientHeight);
+        }
+        
+        // Creating a Renderer
+        var renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById(canvas + 'a'),
+            antialias: true
+        });
+
+        renderer.setClearColor(0x72C2FB, 1);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(document.getElementById(canvas).clientWidth, document.getElementById(canvas).clientHeight);
+                
+        renderer.gammaInput = true;
+        renderer.gammaOutput = true;
+        renderer.shadowMap.enabled = true;
+
+        //ANIMATION 
+        requestAnimationFrame(render);
+    
+        function render() {
+            var timer = Date.now() * 0.0005;
+            camera.position.x = Math.cos(timer) * 3;
+            camera.position.z = Math.sin(timer) * 3;
+            camera.lookAt(cameraTarget);
+            renderer.render(scene, camera);
+            
+            requestAnimationFrame(render);
+        }
+    }
+    //Create for all canvases
+    {% for item in data %}
+        rendererCommon('{{ item.number }}', '{{ item.dmodel }}');
+    {% endfor %}
+    
+    
+</script>
+
+
+{% endblock %}
+
+
+

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'oauth.apps.AuthConfig',
     'status_check',
     'instructions',
-    'widget_tweaks'
+    'widget_tweaks',
+    'telegram_bot_app'
 ]
 
 MIDDLEWARE = [
@@ -61,6 +62,7 @@ ROOT_URLCONF = 'req3d.urls'
 AUTHENTICATION_BACKENDS = [
     'oauth.auth.DiscordAuthenticationBackend'
 ]
+AUTH_USER_MODEL = 'oauth.DiscordUser'
 
 TEMPLATES = [
     {
@@ -114,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
