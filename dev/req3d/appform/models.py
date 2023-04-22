@@ -74,6 +74,7 @@ class Articles(models.Model):
     class Meta:
         verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'
+
 @receiver(pre_delete, sender=Articles)
 def delete_file(sender, instance, **kwargs):
     instance.dmodel.delete(False)
