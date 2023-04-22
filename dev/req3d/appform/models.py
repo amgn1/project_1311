@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.crypto import get_random_string
 import oauth.models as users
 from .validators import *
+from django.dispatch.dispatcher import receiver
+from django.db.models.signals import pre_delete
 
 # Create your models here.
 
@@ -72,3 +74,7 @@ class Articles(models.Model):
     class Meta:
         verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'
+@receiver(pre_delete, sender=Articles)
+def delete_file(sender, instance, **kwargs):
+    instance.dmodel.delete(False)
+    instance.note.delete(False)
