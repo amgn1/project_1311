@@ -46,5 +46,11 @@ def update_request(request):
             return JsonResponse({'success': False,'error_msg':form.errors,'error_code':'400'})
     else:
         return JsonResponse({'success': False,'error_msg':'invalid_request','error_code':'403'})
+
+
+@login_required(login_url='/oauth2/login')
+def card(request):
+    data = Articles.objects.all()
+    return render(request, "home/card.html", {'data': data})
     
     
