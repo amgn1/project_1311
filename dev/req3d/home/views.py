@@ -13,7 +13,7 @@ def is_ajax(request):
 
 @login_required(login_url='/oauth2/login')
 def profile(request):
-    data = Articles.objects.filter(user_id=request.user.id)
+    data = Articles.objects.filter(user_id=request.user.sub)
     forms = [ArticlesForm(instance=obj) for obj in data]
     send_data = zip(data, forms)
     context = {'data': data, 'send_data': send_data}
@@ -23,7 +23,7 @@ def profile(request):
 def delete_request(request, pk):
     card = get_object_or_404(Articles, pk=pk)
     if request.method == 'POST' and is_ajax(request=request):
-        if request.user.id == card.user_id:
+        if request.user.sub == card.user_id:
             card.delete()
             return HttpResponseRedirect('/profile', status=200)
     
@@ -39,7 +39,7 @@ def update_request(request):
         
         if form.is_valid():
             instance = form.save(commit=False)
-            instance.user_id = request.user.id
+            instance.user_id = request.user.sub
             instance.save()
             return JsonResponse({'success': True}, status=200)
         else:
