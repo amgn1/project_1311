@@ -16,77 +16,80 @@
         </p>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4 mt-auto" style='margin: auto'>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-auto" style='margin: 0 20px'>
         {% for obj, form in send_data %}
-        <div class="col" id="card_{{obj.pk}}">
+        <div class="col mx-auto" id="card_{{obj.pk}}">
             <div class="card h-100">
                 <div id="{{obj.number}}">
                     {% comment %} <img src="{{obj.dmodel}}" class="card-img-top" alt="Skyscrapers"/> {% endcomment %}
                     <canvas id="{{obj.number}}a"></canvas>
                         <!-- Сюда помещается 3д-модель -->
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">Заявка №{{obj.number}}</h5>
-                    <p class="card-text">
-                        <b>Проект:</b> {{obj.project_name}} <br>
-                        <b>Руководитель проекта:</b> {{obj.teach_name}} <br>
-                        <b>Cтатус:</b> {{obj.status}} <br>
-                        {% if obj.comment %}
-                        <b>Комментарий проверяющего:</b> {{obj.comment}} <br>
-                        {% endif %}
-
-                    </p>
-                    
-                    <!-- Button trigger update modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{obj.number}}">
-                        Изменить
-                    </button>
+                <div id="card-body" class="card-body">
+                    <div id="card-body-wrapper">
+                        <div id="card-body-container">
+                            <h5 class="card-title">Заявка №{{obj.number}}</h5>
+                            <p class="card-text">
+                                <b>Проект:</b> {{obj.project_name}} <br>
+                                <b>Руководитель проекта:</b> {{obj.teach_name}} <br>
+                                <b>Cтатус:</b> {{obj.status}} <br>
+                                {% if obj.comment %}
+                                <b>Комментарий проверяющего:</b> {{obj.comment}} <br>
+                                {% endif %}
+                            </p>
+                        </div>
                         
-                    <!-- Button trigger delete modal -->
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{obj.number}}">
-                        Удалить
-                    </button>
-                         
-                    <!-- Modal Update -->
-                    <div class="modal fade" id="Modal{{obj.number}}" tabindex="-1" aria-labelledby="Modal{{obj.number}}Label" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="Modal{{obj.number}}Label">Изменение заявки №{{obj.number}}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                {% comment %} <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}"> {% endcomment %}
-                                    <div class="modal-body">
-                                        <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}">
-                                            {% csrf_token %}
-                                        <div class="form-container">
-                                            <input type="hidden" name="object_id" value="{{obj.pk}}">
-                                            {% for field in form %}
-                                                <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
-                                                    <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
-                                                    {% if field.errors %}
-                                                    {{ field|add_class:"is-invalid" }}
-                                                    <div class="invalid-feedback">
-                                                        {% for error in field.errors %}
-                                                            {{ error }}
-                                                        {% endfor %}
+                        <!-- Button trigger update modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{obj.number}}">
+                            Изменить
+                        </button>
+                            
+                        <!-- Button trigger delete modal -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{obj.number}}">
+                            Удалить
+                        </button>
+                            
+                        <!-- Modal Update -->
+                        <div class="modal fade" id="Modal{{obj.number}}" tabindex="-1" aria-labelledby="Modal{{obj.number}}Label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="Modal{{obj.number}}Label">Изменение заявки №{{obj.number}}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    {% comment %} <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}"> {% endcomment %}
+                                        <div class="modal-body">
+                                            <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}">
+                                                {% csrf_token %}
+                                            <div class="form-container">
+                                                <input type="hidden" name="object_id" value="{{obj.pk}}">
+                                                {% for field in form %}
+                                                    <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
+                                                        <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
+                                                        {% if field.errors %}
+                                                        {{ field|add_class:"is-invalid" }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in field.errors %}
+                                                                {{ error }}
+                                                            {% endfor %}
+                                                        </div>
+                                                        {% else %}
+                                                        {{ field }}
+                                                        {% endif %}
                                                     </div>
-                                                    {% else %}
-                                                    {{ field }}
-                                                    {% endif %}
-                                                </div>
-                                            {% endfor %}
-                                        </form>
+                                                {% endfor %}
+                                            </form>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                        <input class="btn btn-primary" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
-                                    </div>
-                                {% comment %} </form> {% endcomment %}
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                            <input class="btn btn-success" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
+                                        </div>
+                                    {% comment %} </form> {% endcomment %}
                             </div>
                         </div>
                     </div>
+                </div>
 
                     <!-- Modal Delete -->
                     <div class="modal fade" id="deleteModal{{obj.number}}" tabindex="-1" aria-labelledby="deleteModal{{obj.number}}Label" aria-hidden="true">
@@ -160,10 +163,20 @@
         xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         xhr.onload = function() {
-            // Здесь обрабатывается ответ - TODO
+            var response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                location.reload();
+            } else {
+                var errorMessage = response.error_msg;
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.innerText = 'Проверьте данные';
+                form.parentNode.insertBefore(alertDiv, form.nextSibling);
+            }
         };
         xhr.send(formData);
     }
+
 
 </script>
 
