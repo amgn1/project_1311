@@ -60,9 +60,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'req3d.urls'
 
 AUTHENTICATION_BACKENDS = [
-    'oauth.auth.DiscordAuthenticationBackend'
+    'oauth.auth.KeycloakAuthenticationBackend'
 ]
-AUTH_USER_MODEL = 'oauth.DiscordUser'
+AUTH_USER_MODEL = 'oauth.KeycloakUser'
 
 TEMPLATES = [
     {

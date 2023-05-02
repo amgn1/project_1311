@@ -1,20 +1,21 @@
 from django.contrib.auth.backends import BaseBackend
-from .models import DiscordUser
+from .models import KeycloakUser
 from django.contrib.auth.models import User
 
-class DiscordAuthenticationBackend(BaseBackend):
-    def authenticate(self, request, user) -> DiscordUser:
-        find_user = DiscordUser.objects.filter(id=user['id'])
+class KeycloakAuthenticationBackend(BaseBackend):
+    def authenticate(self, request, user) -> KeycloakUser:
+        print(user['sub'])
+        find_user = KeycloakUser.objects.filter(pk=user['sub'])
         if len(find_user) == 0:
             print('User was not found. Saving...')
-            new_user = DiscordUser.objects.create_new_discord_user(user)
+            new_user = KeycloakUser.objects.create_new_user(user)
             print(new_user)
             return new_user
         print('User was found. Returning...')
         return find_user
 
-    def get_user(self, user_id):
+    def get_user(self, sub):
         try:
-            return DiscordUser.objects.get(pk=user_id)
-        except DiscordUser.DoesNotExist:
+            return KeycloakUser.objects.get(pk=sub)
+        except KeycloakUser.DoesNotExist:
             return None

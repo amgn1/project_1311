@@ -51,7 +51,7 @@ class Articles(models.Model):
     )
 
     number = models.CharField(max_length=20, unique=True, default=func, verbose_name='Номер заявки')
-    user = models.ForeignKey(users.DiscordUser, on_delete=models.PROTECT, verbose_name='Пользователь')
+    user = models.ForeignKey(users.KeycloakUser, on_delete=models.PROTECT, verbose_name='Пользователь')
     mail = models.EmailField('Электронная почта', max_length=100, validators=[validate_mail])
     name = models.CharField('ФИО', max_length=50, validators=[validate_name])
     op = models.CharField('ОП', max_length=6, choices=GROUPS, validators=[validate_op])
