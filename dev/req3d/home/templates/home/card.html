@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8">
+ <title>Перетаскивание карточек</title>
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+ <style>
+  /* Стили для модального окна */
+
+  .close{
+    width: 30px;
+    height: 30px;
+  }
+  .modal {
+       display: none; /* Скрываем модальное окно по умолчанию */
+       position: fixed; /* Фиксированное положение */
+       z-index: 1; /* Перекрывает все элементы на странице */
+       left: 0;
+       top: 0;
+       width: 100%;
+       height: 100%;
+       overflow: auto; /* Добавляем прокрутку, если содержимое модального окна больше, чем размер экрана */
+       background-color: rgba(0,0,0,0.4); /* Прозрачный черный цвет фона */
+   }
+  .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto; /* 15% от верхнего края экрана */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 20%; /* Ширина модального окна */
+  }
+  /* Стили для кнопки */
+
+  .button {
+      background-color: #4682B4;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+  .column {
+   display: inline-block;
+   vertical-align: top;
+   margin: 10px;
+   padding: 10px;
+   border: 1px solid #ccc;
+   background-color: #f9f9f9;
+   min-width: 200px;
+   height: 500px;
+   overflow: auto;
+  }
+  .card {
+   margin: 10px;
+   padding: 10px;
+   border: 1px solid #ccc;
+   background-color: #fff;
+   cursor: move;
+  }
+  .delete-card {
+  background-color: #fff;
+  border: none;
+  color: #999;
+  font-size: 14px;
+  padding: 5px 10px;
+  margin: 0;
+  cursor: pointer;
+  }
+ </style>
+</head>
+<body>
+<div>
+  <button type="button"><a href="{% url 'profile' %}">Выйти</a></button>
+ </div>
+<style>
+   a {
+    text-decoration: none; /* Отменяем подчеркивание у ссылки */
+    color: black;
+   }
+  </style>
+
+ <div class="column" id="Отклонён">
+     <b>Отклонён</b>
+  {% for s in data %}
+   {% if s.status == "Отклонён"%}
+    <div class="card" id="{{s.id}}">
+
+      <li>
+        <b>Номер заявки </b>{{ s.number }}</br>
+        <b>Почта </b>{{ s.mail }}</br>
+        <b>Образовательная программа </b>{{ s.op }}</br>
+        <b>Курс </b>{{ s.course }}</br>
+        <b>Название проекта </b>{{ s.project_name }}</br>
+        <b>Имя научного руководителя </b>{{ s.teach_name }}</br>
+        <b>Номер телефона заказчика </b>{{ s.phone }}</br>
+        {% if s.comment %}
+        <b>Комментарий заказчика</b>{{ s.comment }}</br>
+        {% endif %}
+        <p>Статус: <b class="status">{{ s.status }}</b></p></br>
+        <span id="my-param" style="display: none;">{{ s.id }}</span>
+        <button class="button"><a href="{{ s.dmodel }}">3D Модель</a></button>
+        <button class="button"><a href="{{ s.note }}">Файл заметка</a></button>
+      </li>
+      <button class="button" onclick="showModal({{ s.id }})">Изменить статус заказа</button>
+      <button class="button" onclick="openWindow()">Удалить</button>
+      <div id="modalwindow" class="modal">
+        <div class="modal-content">
+          <form method="post" action="{% url 'delete_admin' s.id %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+          </form>
+          <button type="button" onclick="closeWindow()">Отмена</button>
+        </div>
+      </div>
+    </div>
+   {% endif %}
+  {% endfor %}
+ </div>
+ <div class="column" id="На рассмотрении">
+     <b>На рассмотрении</b>
+  {% for s in data %}
+   {% if s.status == "На рассмотрении"%}
+      <div class="card" id="{{s.id}}">
+
+        <li>
+          <b>Номер заявки </b>{{ s.number }}</br>
+          <b>Почта </b>{{ s.mail }}</br>
+          <b>Образовательная программа </b>{{ s.op }}</br>
+          <b>Курс </b>{{ s.course }}</br>
+          <b>Название проекта </b>{{ s.project_name }}</br>
+          <b>Имя научного руководителя </b>{{ s.teach_name }}</br>
+          <b>Номер телефона заказчика</b>{{ s.phone }}</br>
+          {% if s.comment %}
+          <b>Комментарий заказчика</b>{{ s.comment }}</br>
+          {% endif %}
+          <p>Статус: <b class="status">{{ s.status }}</b></p></br>
+          <span id="my-param" style="display: none;">{{ s.id }}</span>
+          <button class="button"><a href="{{ s.dmodel }}">3D Модель</a></button>
+          <button class="button"><a href="{{ s.note }}">Файл заметка</a></button>
+        </li>
+        <button class="button" onclick="showModal({{ s.id }})">Изменить статус заказа</button>
+        <button class="button" onclick="openWindow()">Удалить</button>
+      <div id="modalwindow" class="modal">
+        <div class="modal-content">
+          <form method="post" action="{% url 'delete_admin' s.id %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+          </form>
+          <button type="button" onclick="closeWindow()">Отмена</button>
+        </div>
+      </div>
+      </div>
+   {% endif %}
+  {% endfor %}
+ </div>
+ <div class="column" id="В обработке">
+     <b>В обработке</b>
+  {% for s in data %}
+   {% if s.status == "В обработке"%}
+      <div class="card" id="{{s.id}}">
+
+        <li>
+          <b>Номер заявки </b>{{ s.number }}</br>
+          <b>Почта </b>{{ s.mail }}</br>
+          <b>Образовательная программа </b>{{ s.op }}</br>
+          <b>Курс </b>{{ s.course }}</br>
+          <b>Название проекта </b>{{ s.project_name }}</br>
+          <b>Имя научного руководителя </b>{{ s.teach_name }}</br>
+          <b>Номер телефона заказчика</b>{{ s.phone }}</br>
+          {% if s.comment %}
+          <b>Комментарий заказчика</b>{{ s.comment }}</br>
+          {% endif %}
+          <p>Статус: <b class="status">{{ s.status }}</b></p></br>
+          <button class="button"><a href="{{ s.dmodel }}">3D Модель</a></button>
+          <button class="button"><a href="{{ s.note }}">Файл заметка</a></button>
+        </li>
+        <button class="button" onclick="showModal({{ s.id }})">Изменить статус заказа</button>
+        <button class="button" onclick="openWindow()">Удалить</button>
+      <div id="modalwindow" class="modal">
+        <div class="modal-content">
+          <form method="post" action="{% url 'delete_admin' s.id %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+          </form>
+          <button type="button" onclick="closeWindow()">Отмена</button>
+        </div>
+      </div>
+      </div>
+   {% endif %}
+  {% endfor %}
+ </div>
+ <div class="column" id="В работе">
+   <b>В работе</b>
+  {% for s in data %}
+   {% if s.status == "В работе"%}
+      <div class="card" id="{{s.id}}">
+
+        <li>
+          <b>Номер заявки </b>{{ s.number }}</br>
+          <b>Почта </b>{{ s.mail }}</br>
+          <b>Образовательная программа </b>{{ s.op }}</br>
+          <b>Курс </b>{{ s.course }}</br>
+          <b>Название проекта </b>{{ s.project_name }}</br>
+          <b>Имя научного руководителя </b>{{ s.teach_name }}</br>
+          <b>Номер телефона заказчика</b>{{ s.phone }}</br>
+          {% if s.comment %}
+          <b>Комментарий заказчика</b>{{ s.comment }}</br>
+          {% endif %}
+          <p>Статус: <b class="status">{{ s.status }}</b></p></br>
+          <button class="button"><a href="{{ s.dmodel }}">3D Модель</a></button>
+          <button class="button"><a href="{{ s.note }}">Файл заметка</a></button>
+        </li>
+        <button class="button" onclick="showModal({{ s.id }})">Изменить статус заказа</button>
+        <button class="button" onclick="openWindow()">Удалить</button>
+      <div id="modalwindow" class="modal">
+        <div class="modal-content">
+          <form method="post" action="{% url 'delete_admin' s.id %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+          </form>
+          <button type="button" onclick="closeWindow()">Отмена</button>
+        </div>
+      </div>
+      </div>
+   {% endif %}
+  {% endfor %}
+ </div>
+ <div class="column" id="Ожидает получения">
+     <b>Ожидает получения</b>
+  {% for s in data %}
+   {% if s.status == "Ожидает получения"%}
+      <div class="card" id="{{s.id}}">
+
+        <li>
+          <b>Номер заявки </b>{{ s.number }}</br>
+          <b>Почта </b>{{ s.mail }}</br>
+          <b>Образовательная программа </b>{{ s.op }}</br>
+          <b>Курс </b>{{ s.course }}</br>
+          <b>Название проекта </b>{{ s.project_name }}</br>
+          <b>Имя научного руководителя </b>{{ s.teach_name }}</br>
+          <b>Номер телефона заказчика</b>{{ s.phone }}</br>
+          {% if s.comment %}
+          <b>Комментарий заказчика</b>{{ s.comment }}</br>
+          {% endif %}
+            <p>Статус: <b class="status">{{ s.status }}</b></p></br>
+          <button class="button"><a href="{{ s.dmodel }}">3D Модель</a></button>
+          <button class="button"><a href="{{ s.note }}">Файл заметка</a></button>
+        </li>
+        <button class="button" onclick="showModal({{ s.id }})">Изменить статус заказа</button>
+        <button class="button" onclick="openWindow()">Удалить</button>
+      <div id="modalwindow" class="modal">
+        <div class="modal-content">
+          <form method="post" action="{% url 'delete_admin' s.id %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+          </form>
+          <button type="button" onclick="closeWindow()">Отмена</button>
+        </div>
+      </div>
+      </div>
+   {% endif %}
+  {% endfor %}
+ </div>
+ <div class="column" id="Выполнен">
+     <b>Выполнен</b>
+  {% for s in data %}
+   {% if s.status == "Выполнен"%}
+      <div class="card" id="{{s.id}}">
+
+        <li>
+          <b>Номер заявки </b>{{ s.number }}</br>
+          <b>Почта </b>{{ s.mail }}</br>
+          <b>Образовательная программа </b>{{ s.op }}</br>
+          <b>Курс </b>{{ s.course }}</br>
+          <b>Название проекта </b>{{ s.project_name }}</br>
+          <b>Имя научного руководителя </b>{{ s.teach_name }}</br>
+          <b>Номер телефона заказчика</b>{{ s.phone }}</br>
+          {% if s.comment %}
+          <b>Комментарий заказчика</b>{{ s.comment }}</br>
+          {% endif %}
+          <b class="status">Статус: </b>{{ s.status }}</br>
+          <span id="my-param" style="display: none;">{{ s.id }}</span>
+          <button class="button"><a href="{{ s.dmodel }}">3D Модель</a></button>
+          <button class="button"><a href="{{ s.note }}">Файл заметка</a></button>
+        </li>
+        <button class="button" onclick="showModal({{ s.id }})">Изменить статус заказа</button>
+        <button class="button" onclick="openWindow()">Удалить</button>
+      <div id="modalwindow" class="modal">
+        <div class="modal-content">
+          <form method="post" action="{% url 'delete_admin' s.id %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+          </form>
+          <button type="button" onclick="closeWindow()">Отмена</button>
+        </div>
+      </div>
+      </div>
+   {% endif %}
+  {% endfor %}
+ </div>
+ <div id="myModal" class="modal">
+  <div class="modal-content">
+      <button class="close" onclick="closeModal()"></button>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label for="status" >статус заказа</label>
+      <input type="hidden" name="order_id" value="">
+      <select id="status" name="status" id="status-select">
+        <option value="Отклонён">Отклонён</option>
+        <option value="На рассмотрении">На рассмотрении</option>
+        <option value="В обработке">В обработке</option>
+        <option value="В работе">В работе</option>
+        <option value="Ожидает получения">Ожидает получения</option>
+        <option value="Выполнен">Выполнен</option>
+      </select>
+      <div class="text-center" style="margin-top: 10px;">
+        <button type="submit" class="button" value="Send" formaction="{% url 'update_admin' %}">Заказать</button>
+      </div>
+    </form>
+  </div>
+</div>
+ <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
+ <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ {% csrf_token %}
+ <script>
+    $(function() {
+      $(".card").draggable({
+        revert: "invalid",
+        containment: "document",
+        helper: "clone",
+        start: function(event, ui) {
+      // выполняется при начале перемещения элемента
+      console.log("Dragging started");
+        },
+        stop: function(event, ui) {
+      //получение idшников к html
+      var cardId = $(this).attr("id");
+      var columnId = $(this).closest(".column").attr("id");
+      var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+      // выполняется при окончании перемещения элемента
+      console.log("Dragging stopped");
+      $.ajax({
+        url: "card/update_card_status/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: csrf_token,
+          cardId: cardId,
+          newStatus: columnId
+        },
+        success: function(data) {
+          console.log("Card status updated successfully");
+          $('#'+data.data.id+' .status').text(data.data.status);
+        },
+        error: function(xhr, status, error) {
+          console.log("Error updating card status:", error);
+          console.log(JSON.stringify(error));
+        }
+      });
+    }
+      });
+      $( ".column" ).droppable({
+        drop: function( event, ui ) {
+          $( ui.draggable ).appendTo($(this));
+        }
+      });
+      $("#add-card").click(function() {
+        var newCard = $("<div>").addClass("card").text("Новая карточка");
+        $(".column").eq(0).append(newCard);
+        newCard.draggable({
+          revert: "invalid",
+          containment: "document",
+          helper: "clone"
+        });
+      });
+    });
+    function showModal(id) {
+      var modal = document.getElementById("myModal");
+      var form = modal.querySelector('form');
+      form.querySelector('[name="order_id"]').value = id;
+      modal.style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+    }
+    function openWindow(){
+      var modal = document.getElementById("modalwindow").style.display = "block";
+    }
+    function closeWindow(){
+      document.getElementById("modalwindow").style.display = "none";
+    }
+
+
+
+ </script>
+</body>
+</html>

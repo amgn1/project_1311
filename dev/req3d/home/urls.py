@@ -7,5 +7,9 @@ urlpatterns = [
     path('profile', profile, name='profile'),
     path('profile/delete/<int:pk>/', delete_request, name='delete-req'),
     path('profile/object_submit/', update_request, name='object_submit'),
-   
+    path('card', card, name='card'),
+    path('card/update_admin/', update_admin, name='update_admin'),
+    path('card/delete_admin/<int:card_id>', delete_admin, name='delete_admin'),
+    path('card/update_card_status/', update_card_status, name='update_card_status'),
+
 ]
