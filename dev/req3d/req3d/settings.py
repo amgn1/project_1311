@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'status_check',
     'instructions',
     'widget_tweaks',
-    'telegram_bot_app'
+    'bot'
+
 ]
 
 MIDDLEWARE = [
@@ -133,4 +134,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-TELEGRAM_BOT_TOKEN = '6173981128:AAGVhJFSY6hDIUAYmjSYsI1uN2sPBNuAa6s'
+TELEGRAM_BOT_API_KEY = '6173981128:AAGVhJFSY6hDIUAYmjSYsI1uN2sPBNuAa6s'

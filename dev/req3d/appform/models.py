@@ -48,9 +48,10 @@ class Articles(models.Model):
         ('Ожидает получения','Ожидает получения'),
         ('Отклонен','Отклонен'),
         ('Выполнен','Выполнен')
+
     )
 
-    number = models.CharField(max_length=20, unique=True, default=func, verbose_name='Номер заявки')
+    number = models.CharField(max_length=20, unique=True, default=func, verbose_name='Номер заявки', primary_key=True)
     user = models.ForeignKey(users.DiscordUser, on_delete=models.PROTECT)
     mail = models.EmailField('Электронная почта', max_length=100, validators=[validate_mail])
     name = models.CharField('ФИО', max_length=50, validators=[validate_name])
