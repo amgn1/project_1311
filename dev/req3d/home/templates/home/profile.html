@@ -5,6 +5,7 @@
 
 {% block content %}
 
+
 <div class="mt-auto" style="padding: 5% 0 10% 0;">
     <div class="container p-4">
         <p class='text-center mb-4 display-6'>
@@ -12,9 +13,11 @@
             <br>
         </p>
         <p class='text-center mb-4 fs-4'>
-            <small class="text-muted">На карточках ниже представлена краткая информация о ваших заявках. Вы можете проверить статус каждой заявки и изменить её, нажав на соответствующие кнопки.</small>
+            <small class="text-muted">Здесь вы можете проверить статус заявки и внести изменения, нажав на соответствующие кнопки.<br/>
+                Подать заявку можно <a href="{% url 'appform' %}"><span style='text-decoration: underline;'>здесь</span></a></small>
         </p>
     </div>
+
 
     <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 mt-auto" style='margin: 0 20px'>
         {% for obj, form in send_data %}
@@ -83,7 +86,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                            <input class="btn btn-success" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
+                                            <input class="btn btn-primary" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
                                         </div>
                                     {% comment %} </form> {% endcomment %}
                             </div>
@@ -114,13 +117,14 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Последний раз обновлена {{obj.time_created}}</small>
+                    <small class="text-muted">Время создания <span id="created-date">{{ obj.time_created }}</span></small>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
 
 <script src="{% static 'home/js/jquery-3.6.4.min.js' %}"></script>
 <script>
@@ -171,13 +175,18 @@
                 var alertDiv = document.createElement('div');
                 alertDiv.className = 'alert alert-danger';
                 alertDiv.innerText = 'Проверьте данные';
-                form.parentNode.insertBefore(alertDiv, form.nextSibling);
+                alertDiv.style.position = 'fixed';
+                alertDiv.style.bottom = '50px';
+                alertDiv.style.right = '40px';
+                alertDiv.style.zIndex = 5050;
+                document.body.appendChild(alertDiv);
+                setTimeout(function() {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }, 5000);
             }
         };
         xhr.send(formData);
     }
-
-
 </script>
 
 <script src="{% static 'home/js/three.js' %}"></script>
@@ -335,12 +344,9 @@
     {% for item in data %}
         rendererCommon('{{ item.number }}', '{{ item.dmodel }}');
     {% endfor %}
-    
-    
+
 </script>
 
 
 {% endblock %}
-
-
 
