@@ -4,6 +4,8 @@ from appform.models import Articles
 from appform.forms import ArticlesForm
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
+from datetime import timezone, timedelta
+
 
 def index(request):
     return render(request, "home/index.html")
@@ -15,7 +17,13 @@ def is_ajax(request):
 def profile(request):
     data = Articles.objects.filter(user_id=request.user.id)
     forms = [ArticlesForm(instance=obj) for obj in data]
-    send_data = zip(data, forms)
+    send_data = []
+
+    # Convert the time_created field from UTC to UTC+3
+    for obj, form in zip(data, forms):
+        obj.time_created += timedelta(hours=3)
+        send_data.append((obj, form))
+
     context = {'data': data, 'send_data': send_data}
     return render(request, "home/profile.html", context)
 
@@ -46,5 +54,4 @@ def update_request(request):
             return JsonResponse({'success': False,'error_msg':form.errors,'error_code':'400'})
     else:
         return JsonResponse({'success': False,'error_msg':'invalid_request','error_code':'403'})
-    
     
