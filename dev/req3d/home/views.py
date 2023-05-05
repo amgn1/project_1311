@@ -5,6 +5,7 @@ from appform.forms import ArticlesForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.template import RequestContext
+from django.contrib.auth.decorators import user_passes_test
 
 def index(request):
     return render(request, "home/index.html")
@@ -48,7 +49,7 @@ def update_request(request):
     else:
         return JsonResponse({'success': False,'error_msg':'invalid_request','error_code':'403'})
 
-@login_required(login_url='/oauth2/login')
+@user_passes_test(lambda u: u.is_admin, login_url='/profile')
 def card(request):
     form = ArticlesForm()
     data = Articles.objects.all()
@@ -61,7 +62,9 @@ def update_admin(request):
     data_form = get_object_or_404(Articles, id=or_id)
     if request.method == 'POST':
         new_status = request.POST.get('status')
+        new_comment = request.POST.get('comment')
         data_form.status = new_status
+        data_form.comment = new_comment
         data_form.save()
         return redirect('card')
     else:
