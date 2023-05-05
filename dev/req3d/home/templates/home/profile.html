@@ -6,10 +6,10 @@
 {% block content %}
 
 
-<div class="mt-auto" style="padding: 5% 0 10% 0;">
+<div class="mt-auto" style="padding: 4% 0 10% 0;">
     <div class="container p-4">
         <p class='text-center mb-4 display-6'>
-            <strong>Ваши поданные заявки</strong>
+            <strong>Поданные заявки</strong>
             <br>
         </p>
         <p class='text-center mb-4 fs-4'>
@@ -194,7 +194,6 @@
 <script src="{% static 'home/js/WebGL.js' %}"></script>
 
 <script>
-
     function rendererCommon(canvas, model) {
         
         // Variabels, do not change
@@ -212,9 +211,13 @@
         scene.background = new THREE.Color(0xB0DFE5);
 
         // Creating a Camera
-        var camera = new THREE.PerspectiveCamera(cameraFov, document.getElementById(canvas).clientWidth / document.getElementById(canvas).clientHeight, 1, 15);
+        var canvasElem = document.getElementById(canvas);
+        var width = canvasElem.clientWidth;
+        var height = canvasElem.clientHeight;
+        var aspectRatio = width / height;
+        var camera = new THREE.PerspectiveCamera(cameraFov, aspectRatio, 1, 15);
         cameraTarget = new THREE.Vector3(0, 0, 0);
-            
+
         // STL Loader - Model
         var loader = new THREE.STLLoader();
         loader.load(model, function(geometry) {
@@ -306,23 +309,30 @@
         window.addEventListener("resize", onWindowResize);
     
         function onWindowResize() {
-    
-            camera.aspect = (document.getElementById(canvas).clientWidth) / (document.getElementById(canvas).clientHeight);
-    
+            var canvasElem = document.getElementById(canvas);
+            camera.aspect = canvasElem.clientWidth / canvasElem.clientHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(document.getElementById(canvas).clientWidth, document.getElementById(canvas).clientHeight);
+            renderer.setSize(canvasElem.clientWidth, canvasElem.clientHeight);
+            canvasElem.style.height = canvasElem.clientWidth / camera.aspect + 'px';
         }
+
         
         // Creating a Renderer
-        var renderer = new THREE.WebGLRenderer({
-            canvas: document.getElementById(canvas + 'a'),
-            antialias: true
+            var renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById(canvas + 'a'),
+        antialias: true
         });
 
         renderer.setClearColor(0x72C2FB, 1);
         renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(document.getElementById(canvas).clientWidth, document.getElementById(canvas).clientHeight);
-                
+
+        // Set canvas width and height
+        renderer.setSize(width, height);
+
+        // Set aspect ratio on initial load
+        camera.aspect = aspectRatio;
+        camera.updateProjectionMatrix();
+
         renderer.gammaInput = true;
         renderer.gammaOutput = true;
         renderer.shadowMap.enabled = true;

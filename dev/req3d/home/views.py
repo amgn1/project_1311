@@ -17,13 +17,7 @@ def is_ajax(request):
 def profile(request):
     data = Articles.objects.filter(user_id=request.user.id)
     forms = [ArticlesForm(instance=obj) for obj in data]
-    send_data = []
-
-    # Convert the time_created field from UTC to UTC+3
-    for obj, form in zip(data, forms):
-        obj.time_created += timedelta(hours=3)
-        send_data.append((obj, form))
-
+    send_data = zip(data, forms)
     context = {'data': data, 'send_data': send_data}
     return render(request, "home/profile.html", context)
 
