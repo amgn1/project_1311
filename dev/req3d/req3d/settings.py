@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'django_bootstrap5',
     'oauth.apps.AuthConfig',
-    'status_check',
     'instructions',
     'widget_tweaks',
     'telegram_bot_app'

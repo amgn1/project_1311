@@ -15,8 +15,6 @@ def appform_view(request):
             instance = form.save(commit=False)
             instance.user_id = request.user.id
             instance.save()
-
-            return render(request,'home/index.html')
     else:
         form = ArticlesForm()
         context = {'form': form}

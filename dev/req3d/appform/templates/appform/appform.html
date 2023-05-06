@@ -2,37 +2,9 @@
 {% block title %}3D MIEM{% endblock %}
 {% block content %}
 {% load widget_tweaks %}
-
+{% load static %}
 
 <style>
-    .center {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 50px;
-        margin-bottom: 48px;
-    }
-
-	.button {
-		display: inline-block;
-		padding: 15px 25px;
-		cursor: pointer;
-		text-align: center;
-		text-decoration: none;
-		outline: none;
-		color: black;
-		background-color: #d6e6ff;
-		border: none;
-		border-radius: 30px;
-		font-size: 20px
-	}
-
-	.button:hover {background-color: #BDD6FF}
-
-	.button:active {
-		background-color: #A3C7FF;
-	}
-
     td, th {
         padding: 10px;
 		font-weight: normal;
@@ -54,7 +26,7 @@
 	    border-bottom: 1px solid #000;
 		padding-bottom: 5px;
 	    outline: none;
-	    font-size: 18px;
+	    font-size: calc(min(22px, 1.2rem + .12vw)*0.9);
 	}
 	
 	.form-group select {
@@ -62,11 +34,11 @@
 	    border-bottom: 1px solid #000;
 		padding-bottom: 5px;
 	    outline: none;
-	    font-size: 18px;
+	    font-size: calc(min(22px, 1.2rem + .12vw)*0.9);
 	}
 	
 	form label, form input, form select {
-        font-size: 20px;
+        font-size: calc(min(22px, 1.2rem + .12vw));
     }
 	
 	input[type="file"] {
@@ -78,6 +50,17 @@
 	::placeholder {
 		opacity: 0.75; /* Opacity of the placeholder text */
 	}
+
+	.custom-button {
+		font-size: calc(min(22px, 1.2rem + .12vw)*0.8);
+		border-radius: 50px;
+	}
+
+	.invalid-feedback {
+		font-size: calc(min(22px, 1.2rem + .12vw)*0.75);
+	}
+
+
 </style>
 
 <div class="mt-auto" style="padding: 5% 0 10% 0;">
@@ -87,37 +70,72 @@
             <br>
         </p>
         <p class='text-center mb-4 fs-4'>
-            <small class="text-muted">СРОК РАССМОТРЕНИЯ ЗАЯВКИ МОЖЕТ ВАРЬИРОВАТЬСЯ ОТ 1 РАБОЧЕГО ДНЯ ДО 3Х</small>
+            <small class="text-muted">Срок рассмотрения заявки может варьироваться от 1 рабочего дня до 3-х</small>
         </p>
     </div>
 
-<div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
-    <div class="form-container">
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
-                    <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
-					{% if field.errors %}
-					{{ field|add_class:"is-invalid" }}
-					<div class="invalid-feedback">
-						{% for error in field.errors %}
-							{{ error }}
-						{% endfor %}
+	<div class="d-flex justify-content-center align-items-center" style="margin-left: 10px; margin-right: 10px;">
+		<div class="form-container">
+			<form method="POST" enctype="multipart/form-data" novalidate>
+				{% csrf_token %}
+				{% for field in form %}
+					<div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
+						<label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
+						{% if field.errors %}
+						{{ field|add_class:"is-invalid" }}
+						<div class="invalid-feedback">
+							{% for error in field.errors %}
+								{{ error }}
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ field }}
+						{% endif %}
 					</div>
-					{% else %}
-					{{ field }}
-					{% endif %}
-                </div>
-            {% endfor %}
-            <div class="text-center" style="margin-top: 10px;">
-                <button type="submit" class="button" value="Send">Заказать</button>
+				{% endfor %}
+				<div class="text-center" style="margin-top: 10px;">
+					<button type="submit" class="btn btn-primary btn-lg custom-button" value="Send">Заказать</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Заявка успешно отправлена!</h5>
+                <button type="button" class="btn-close close-modal" aria-label="Close"></button>
             </div>
-        </form>
+            <div class="modal-body">
+                Вы можете подключить уведомления об изменении статуса заявки через нашего Telegram-бота.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">Закрыть</button>
+            </div>
+        </div>
     </div>
 </div>
 
-</div>
+
+<script src="{% static 'home/js/jquery-3.6.4.min.js' %}"></script>
+<script>
+	$(document).ready(function() {
+		{% if form.is_valid %}
+			$('#successModal').modal('show');
+		{% endif %}
+	
+		// Redirect to homepage after modal is closed
+		$('.close-modal').click(function() {
+			$('#successModal').modal('hide');
+			window.location.href = "/"; // Replace with your homepage URL
+		});
+	
+	});
+</script>
 
 
 {% endblock %}
