@@ -8,27 +8,27 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
-from .models import DiscordUser
+from .models import KeycloakUser
 
-class DiscordUserAdmin(BaseUserAdmin):
+class KeycloakUserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     # form = UserChangeForm
     # add_form = UserCreationForm
 
-    list_display = ('discord_tag', 'last_login', 'is_admin', 'is_active')
+    list_display = ('full_name', 'last_login', 'is_admin', 'is_active')
     list_filter = ('is_admin',)
     fieldsets = (
         ('Personal info', {
-            'fields': ('discord_tag', 'last_login')
+            'fields': ('full_name', 'last_login')
         }),
         ('Permissions', {
             'fields': ('is_admin', 'is_active')
         }),
     )
-    readonly_fields = ('discord_tag', 'last_login')
-    search_fields = ('discord_tag',)
-    ordering = ('discord_tag',)
+    readonly_fields = ('full_name', 'last_login')
+    search_fields = ('full_name',)
+    ordering = ('full_name',)
     filter_horizontal = ()
 
-admin.site.register(DiscordUser, DiscordUserAdmin)
+admin.site.register(KeycloakUser, KeycloakUserAdmin)
 admin.site.unregister(Group)

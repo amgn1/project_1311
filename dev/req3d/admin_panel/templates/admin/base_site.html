@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<div id="branding-container" style="display: flex; align-items: center;">
+    <a class="navbar-brand" href="/admin/">
+        <img src="/static/home/img/_svg.png" width="110" height="28" alt="" loading="lazy">
+    </a>
+    <h1 style="margin-left: 12px;" id="site-name"><a href="{% url 'admin:index' %}">Система заявок для 3Д-печати</a></h1>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

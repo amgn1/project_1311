@@ -58,7 +58,7 @@ class Articles(models.Model):
     )
 
     number = models.CharField(max_length=20, unique=True, default=func, verbose_name='Номер заявки')
-    user = models.ForeignKey(users.DiscordUser, on_delete=models.PROTECT, verbose_name='Пользователь')
+    user = models.ForeignKey(users.KeycloakUser, on_delete=models.PROTECT, verbose_name='Пользователь')
     mail = models.EmailField('Электронная почта', max_length=100, validators=[validate_mail])
     name = models.CharField('ФИО', max_length=50, validators=[validate_name])
     op = models.CharField('ОП', max_length=6, choices=GROUPS, validators=[validate_op])
@@ -71,14 +71,26 @@ class Articles(models.Model):
     comment = models.CharField('Комментарий к заявке', max_length=500, validators=[], blank=True, null=True)
     status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении')
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    status_changed = models.BooleanField(default=False)
 
 
     def __str__(self):
         return self.name
-
+        
+    def save(self, *args, **kwargs):
+        if self.pk:
+            # Если заказ уже существует, то проверяем, изменился ли статус
+            old_status = Articles.objects.get(pk=self.pk).status
+            if old_status != self.status:
+                self.status_changed = True
+        super().save(*args, **kwargs)
+  
     class Meta:
         verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'
+        
+     
+
 
 @receiver(pre_delete, sender=Articles)
 def delete_file(sender, instance, **kwargs):
@@ -105,3 +117,5 @@ def delete_old_file(sender, instance, **kwargs):
             note_deleted.send(sender=sender, path=old_note.path)
 
     return True
+
+

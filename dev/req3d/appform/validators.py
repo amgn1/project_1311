@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 import re
+import os
 
 def validate_name(value):
     if value is None:
@@ -45,8 +46,10 @@ def validate_teach_name(value):
 
 def validate_dmodel(value):
     if not value.name.endswith(".stl"):
-        raise ValidationError("Некорректный тип файла")
+        raise ValidationError("Некорректный тип файла. Разрешён формат файла .stl")
 
 def validate_note(value):
-    if not value.name.endswith(".txt"):
-        raise ValidationError("Некорректный тип файла")
+    ext = os.path.splitext(value.name)[1]  # get file extension
+    valid_extensions = ['.pdf', '.doc', '.docx', '.txt']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError("Некорректный тип файла. Разрешены .pdf, .doc, .docx и .txt")

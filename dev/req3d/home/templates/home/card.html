@@ -1,0 +1,220 @@
+{% extends 'base_generic.html' %}
+{% block title %}3D MIEM{% endblock %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Перетаскивание карточек</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <style>
+        /* Стили для модального окна */
+
+        .close {
+            width: 30px;
+            height: 30px;
+        }
+
+
+        /* Стили для кнопки */
+
+        .button {
+            background-color: #4682B4;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            min-height: 400px;
+            overflow: auto;
+            padding-bottom: 70px;
+        }
+
+        .card {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: move;
+        }
+
+
+        .delete-card {
+            background-color: #fff;
+            border: none;
+            color: #999;
+            font-size: 14px;
+            padding: 5px 10px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            /* Отменяем подчеркивание у ссылки */
+            color: rgb(255, 255, 255);
+        }
+
+        a:hover {
+        color: rgb(255, 255, 255);
+        }
+
+        .btn.btn-primary {
+            margin-top: 5px;
+        }
+
+        .btn.btn-danger {
+            margin-top: 5px;
+        }
+
+        .btn.btn-success {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container p-4" style="margin-top: 15px;">
+        <p class='text-center mb-4 display-6'>
+            <strong>Управление заявками</strong>
+            <br>
+        </p>
+        <p class='text-center mb-4 fs-4'>
+            <small class="text-muted">На карточках приведена информация о заявках. Карточки можно изменять, перемещать между категориями. Назначить администраторов можно <a href="{% url 'admin:index' %}"><span style='text-decoration: underline; color: rgb(38, 78, 142);'>здесь</span></a></small>
+        </p>
+    </div>
+
+    <div class="row" style="display: flex; flex-wrap: wrap; align-items: stretch; padding: 2% 2% 5% 2%; display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); align-content: start; max-width: calc(100% - 5px); margin-left: 1px;">
+        <div class="column" id="Отклонён">
+            <b>Отклонён</b>
+            {% for s in data %}
+            {% if s.status == "Отклонён"%}
+            {% include 'home/card_template.html' %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="column" id="На рассмотрении">
+            <b>На рассмотрении</b>
+            {% for s in data %}
+            {% if s.status == "На рассмотрении"%}
+            {% include 'home/card_template.html' %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="column" id="В обработке">
+            <b>В обработке</b>
+            {% for s in data %}
+            {% if s.status == "В обработке"%}
+            {% include 'home/card_template.html' %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="column" id="В работе">
+            <b>В работе</b>
+            {% for s in data %}
+            {% if s.status == "В работе"%}
+            {% include 'home/card_template.html' %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="column" id="Ожидает получения">
+            <b>Ожидает получения</b>
+            {% for s in data %}
+            {% if s.status == "Ожидает получения"%}
+            {% include 'home/card_template.html' %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="column" id="Выполнен">
+            <b>Выполнен</b>
+            {% for s in data %}
+            {% if s.status == "Выполнен"%}
+            {% include 'home/card_template.html' %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+
+    
+    <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    {% csrf_token %}
+    <script>
+        $(function () {
+            $(".card").draggable({
+                revert: "invalid",
+                containment: "document",
+                helper: "clone",
+                start: function (event, ui) {
+                    // выполняется при начале перемещения элемента
+                    console.log("Dragging started");
+                },
+                stop: function (event, ui) {
+                    //получение idшников к html
+                    var cardId = $(this).attr("id");
+                    var columnId = $(this).closest(".column").attr("id");
+                    var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+                    // выполняется при окончании перемещения элемента
+                    console.log("Dragging stopped");
+                    $.ajax({
+                        url: "management/update_card_status/",
+                        type: "POST",
+                        data: {
+                            csrfmiddlewaretoken: csrf_token,
+                            cardId: cardId,
+                            newStatus: columnId
+                        },
+                        success: function (data) {
+                            console.log("Card status updated successfully");
+                            $('#' + data.data.id + ' .status').text(data.data.status);
+                            // страница обновляется, чтобы карточки были отсортированы по номеру заказа и чтобы в окне изменения заявки был текущий статус
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            console.log("Error updating card status:", error);
+                            console.log(JSON.stringify(error));
+                        }
+                    });
+                }
+            });
+            $(".column").droppable({
+                drop: function (event, ui) {
+                    $(ui.draggable).appendTo($(this));
+                }
+            });
+            $("#add-card").click(function () {
+                var newCard = $("<div>").addClass("card").text("Новая карточка");
+                $(".column").eq(0).append(newCard);
+                newCard.draggable({
+                    revert: "invalid",
+                    containment: "document",
+                    helper: "clone"
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
+{% endblock %}
