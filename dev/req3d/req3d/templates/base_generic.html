@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,11 +38,22 @@
 
 </head>
 
+<style>
+    .custom-font-size {
+        font-size: 18px;
+    }
+    
+    .custom-font-size2 {
+        font-size: 16px;
+    }
+
+</style>
+
 <body class="d-flex flex-column min-vh-100">
-    <div class="mt-auto">
-        <nav class="navbar navbar-expand-lg", style="background-color: #d6e6ff; padding: 1.25% 5% 1.5% 5%">
+    <header>
+        <nav class="navbar navbar-expand-lg", style="background-color: #d6e6ff; padding: 1% 5% 1.1% 5%">
             <div class="container-fluid">
-                <a class="navbar-brand" href="https://miem.hse.ru/">
+                <a class="navbar-brand" href="https://miem.hse.ru/edu/ce/compgraph/">
                     <img src="{% static 'home/img/_svg.png' %}" width="110" height="28" alt="" loading="lazy">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvasLg" aria-controls="navbarOffcanvasLg">
@@ -55,21 +67,18 @@
                     <div class="offcanvas-body">
                         <ul class="navbar-nav justify-content-end flex-grow-1 pe-3", style="padding: 1% 1% 1% 1%">
                             <li class="nav-item">
-                                <a class="nav-link {% if request.get_full_path == "/" %}active{% endif %}" aria-current="page" href="{% url 'home' %}"> Главная</a>
+                                <a class="nav-link custom-font-size {% if request.get_full_path == "/" %}active{% endif %}" aria-current="page" href="{% url 'home' %}"> Главная</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if request.get_full_path == "/request/" %}active{% endif %}" href="{% url 'appform' %}"> Подать заявку</a>
+                                <a class="nav-link custom-font-size {% if request.get_full_path == "/request/" %}active{% endif %}" href="{% url 'appform' %}"> Подать заявку</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if request.get_full_path == "/status/" %}active{% endif %}" href="{% url 'status_check' %}"> Статус заказа</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.get_full_path == "/instructions/" %}active{% endif %}" href="{% url 'instructions' %}"> Инструкция</a>
+                                <a class="nav-link custom-font-size {% if request.get_full_path == "/instructions/" %}active{% endif %}" href="{% url 'instructions' %}"> Инструкция</a>
                             </li>
 
-                            {% if user.discord_tag %}
+                            {% if user.full_name %}
                                 {% comment %} <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'profile' %}"><i class="bi bi-person-fill"></i> Профиль</a>
+                                    <a class="nav-link custom-font-size" href="{% url 'profile' %}"><i class="bi bi-person-fill"></i> Профиль</a>
                                 </li>
                                 <li class="nav-item d-flex pt-1">
                                     <button type="button" class="btn btn-primary flex-grow-1" onclick="document.location='{% url 'oauth_logout' %}'"><i class="bi bi-box-arrow-right"></i> Выйти</a>
@@ -86,27 +95,27 @@
                                         style="padding: 1% 1% 1% 1%"
                                     >
                                         <img
-                                            src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png"
+                                            src="{{user.avatar}}"
                                             class="rounded-circle"
                                             height="25"
                                             loading="lazy"
                                         />
-                                        {{ user.discord_tag }}
+                                        {{ user.full_name }}
                                     </span>
                                     <ul
                                         class="dropdown-menu dropdown-menu-end align-items-center"
                                         aria-labelledby="navbarDropdownMenuAvatar"
                                     >
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{% url 'profile' %}"><i class="bi bi-person-fill"></i> Профиль</a>
+                                            <a class="nav-link custom-font-size2" href="{% url 'profile' %}"><i class="bi bi-person-fill"></i> Профиль</a>
                                         </li>
                                         {% if user.is_admin %}
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{% url 'card' %}"><i class="fas fa-users-gear"></i> Управление</a>
+                                            <a class="nav-link custom-font-size2" href="/admin/"><i class="fas fa-users-gear"></i> Управление</a>
                                         </li>
                                         {% endif %}
                                         <li class="nav-item d-flex pt-1">
-                                            <button type="button" class="btn btn-primary flex-grow-1" onclick="document.location='{% url 'oauth_logout' %}'"><i class="bi bi-box-arrow-right"></i> Выйти</a>
+                                            <button type="button" class="btn btn-primary flex-grow-1" style="font-size: 14px;" onclick="document.location='{% url 'oauth_logout' %}'"><i class="bi bi-box-arrow-right"></i> Выйти</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -123,7 +132,7 @@
                 </div>
             </div>
         </nav>
-    </div>
+    </header>
     {% block content %}
 
     {% endblock content %}
@@ -136,9 +145,9 @@
                 <!--Grid row-->
                 <div class="row mt-4">
                     <!--Grid column-->
-                    <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
-                        <a class="navbar-brand" href="https://miem.hse.ru/">
-                            <img src="{% static 'home/img/_svg.png' %}" width="110" height="28" alt="" loading="lazy">
+                    <div class="col-lg-4 col-md-12 mb-4 mb-md-0 text-center" style="margin-top: 15px">
+                        <a class="navbar-brand" href="https://miem.hse.ru/edu/ce/compgraph/">
+                            <img class="mx-auto" src="{% static 'home/img/_svg.png' %}" width="110" height="28" alt="" loading="lazy">
                         </a>
                         
                         <p>
@@ -147,42 +156,38 @@
     
                         <div class="mt-4">
                             <!-- Telegram -->
-                            <a type="button" class="btn btn-primary btn-rounded btn-lg shadow-3-strong" href='#'><i class="bi bi-telegram"></i> Telegram Bot</a>
+                            <a type="button" class="btn btn-primary btn-rounded btn-lg shadow-3-strong" href='https://t.me/print_3d_miem_hse_bot'><i class="bi bi-telegram"></i> Telegram Bot</a>
                         </div>
                     </div>
                     <!--Grid column-->
     
                     <!--Grid column-->
-                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0 text-center" style="margin-top: 15px">
                         <h5 class="text-uppercase mb-4 pb-1">Контактные данные</h5>
     
-                        <ul class="fa-ul text-left" style='list-style-type: none; margin-left: -40px'>
+                        <ul class="fa-ul text-left" style='list-style-type: none; margin-left: -10px;'>
                             <li class="mb-3">
-                                <address class="fa-li"></address><address class="ms-2">123458, Москва, ул. Таллинская, д. 34</address>
+                                <address class="fa-li"></address><address class="ms-2">Таллинская ул., 34, комната 211</address>
                             </li>
                             <li class="mb-3">
-                                <span class="fa-li"></span><a href="mailto:imotajlenko@hse.ru" class="link-light ms-2">imotajlenko@hse.ru</a>
+                                <span class="fa-li"></span><span class="ms-2">Телефон: 8-495-772-95-90 *15189</span>
                             </li>
                             <li class="mb-3">
-                                <span class="fa-li"></span><span class="ms-2">Мотайленко Илья Александрович</span>
+                                <span class="fa-li"></span><a href="mailto:arolich@hse.ru" class="link-light ms-2">Email: arolich@hse.ru</a>
                             </li>
                         </ul>
                     </div>
                     <!--Grid column-->
     
                     <!--Grid column-->
-                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0 text-center" style="margin-top: 15px">
                         <h5 class="text-uppercase mb-4">Рабочее время</h5>
     
                         <table class="table text-center text-white">
                             <tbody class="fw-normal">
                                 <tr>
-                                    <td><i class="fas fa-calendar-check"></i> Пн - Пт:</td>
-                                    <td><i class="far fa-clock me-2"></i> 8:00 - 21:00</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fas fa-calendar-check"></i> Сб - Вс:</td>
-                                    <td><i class="far fa-clock me-2"></i> 9:00 - 22:00</td>
+                                    <td class="custom-font-size2"><i class="fas fa-calendar-check"></i> Пн - Пт:</td>
+                                    <td class="custom-font-size2"><i class="far fa-clock me-2"></i> 10:00 - 18:00</td>
                                 </tr>
                             </tbody>
                         </table>
