@@ -16,7 +16,6 @@ def appform_view(request):
             instance.user_id = request.user.sub
             instance.save()
 
-            return redirect('/')
     else:
         form = ArticlesForm()
         context = {'form': form}
