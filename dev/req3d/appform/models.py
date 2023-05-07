@@ -2,6 +2,13 @@ from django.db import models
 from django.utils.crypto import get_random_string
 import oauth.models as users
 from .validators import *
+from django.dispatch.dispatcher import receiver
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import Signal
+import os
+
+dmodel_deleted = Signal()
+note_deleted = Signal()
 
 # Create your models here.
 
@@ -69,11 +76,7 @@ class Articles(models.Model):
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        verbose_name = 'Заявку'
-        verbose_name_plural = 'Заявки'
-
+        
     def save(self, *args, **kwargs):
         if self.pk:
             # Если заказ уже существует, то проверяем, изменился ли статус
@@ -81,4 +84,38 @@ class Articles(models.Model):
             if old_status != self.status:
                 self.status_changed = True
         super().save(*args, **kwargs)
+  
+    class Meta:
+        verbose_name = 'Заявку'
+        verbose_name_plural = 'Заявки'
+        
+     
+
+
+@receiver(pre_delete, sender=Articles)
+def delete_file(sender, instance, **kwargs):
+    instance.dmodel.delete(False)
+    instance.note.delete(False)
+
+@receiver(pre_save, sender=Articles)
+def delete_old_file(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+    try:
+        old_dmodel = sender.objects.get(pk=instance.pk).dmodel
+        old_note = sender.objects.get(pk=instance.pk).note
+    except sender.DoesNotExist:
+        return False
+
+    new_dmodel = instance.dmodel
+    new_note = instance.note
+    if old_dmodel != new_dmodel and old_note != new_note:
+        if os.path.isfile(old_dmodel.path) and os.path.isfile(old_note.path):
+            os.remove(old_dmodel.path)
+            os.remove(old_note.path)
+            dmodel_deleted.send(sender=sender, path=old_dmodel.path)
+            note_deleted.send(sender=sender, path=old_note.path)
+
+    return True
+
 
