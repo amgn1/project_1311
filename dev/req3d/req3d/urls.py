@@ -29,7 +29,6 @@ urlpatterns = [
     path('request/', include('appform.urls')),
     # path('auth/user', views.get_authenticated_user, name='get_authenticated_user'),
     path('oauth2/', include('oauth.urls')),
-    path('status/', include('status_check.urls')),
     path('instructions/', include('instructions.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
