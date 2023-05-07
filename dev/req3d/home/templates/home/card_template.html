@@ -1,0 +1,91 @@
+<div class="card" id="{{s.id}}">
+    <li style="list-style: none; max-width: 500px">
+        <div class="card-header text-center"><b>Заявка №{{ s.number }}</b></div>
+        <b>ФИО: </b>{{ s.name }}</br>
+        <b>Телефон: </b>{{ s.phone }}</br>
+        <b>Почта: </b>{{ s.mail }}</br>
+        <b>ОП: </b>{{ s.op }}</br>
+        <b>Курс: </b>{{ s.course }}</br>
+        <b>Название проекта: </b>{{ s.project_name }}</br>
+        <b>ФИО научного руководителя: </b>{{ s.teach_name }}</br>
+        {% if s.comment %}
+        <b>Комментарий: </b>{{ s.comment }}</br>
+        {% endif %}
+        <span id="my-param" style="display: none;">{{ s.id }}</span>
+        <button class="btn btn-primary btn-block"><a href="{{ s.dmodel }}">3D Модель</a></button>
+        <button class="btn btn-primary btn-block"><a href="{{ s.note }}">Файл заметка</a></button>
+        
+    </li>
+
+    
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#StatusModal{{s.id}}">
+        Изменить
+    </button>
+
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteModal{{s.id}}">
+        Удалить
+    </button>
+
+    <div class="modal fade" style="pointer-events: none;" id="StatusModal{{s.id}}" tabindex="-1" aria-labelledby="StatusModal{{s.id}}Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="pointer-events: none;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="StatusModal{{obj.number}}Label">Изменение заявки №{{s.number}}</h5>
+                    <button type="button" class="btn-close" style="pointer-events: auto;" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Статус заказа {{s.number}}</label>
+                            <input type="hidden" name="order_id" value="{{s.id}}">
+                            <select id="status" style="pointer-events: auto;" class="form-control" name="status" id="status-select">
+                                <option value="Отклонён" {% if s.status == 'Отклонён' %}selected{% endif %}>Отклонён</option>
+                                <option value="На рассмотрении" {% if s.status == 'На рассмотрении' %}selected{% endif %}>На рассмотрении</option>
+                                <option value="В обработке" {% if s.status == 'В обработке' %}selected{% endif %}>В обработке</option>
+                                <option value="В работе" {% if s.status == 'В работе' %}selected{% endif %}>В работе</option>
+                                <option value="Ожидает получения" {% if s.status == 'Ожидает получения' %}selected{% endif %}>Ожидает получения</option>
+                                <option value="Выполнен" {% if s.status == 'Выполнен' %}selected{% endif %}>Выполнен</option>
+                            </select><br/>
+                            <label for="comment" class="form-label">Комментарий</label>
+                            <textarea id="comment" style="pointer-events: auto;" class="form-control" rows="5" name="comment">{% if s.comment %}{{ s.comment }}{% endif %}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="text-center" style="margin-top: 10px;">
+                            <button type="button" style="pointer-events: auto;" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" style="pointer-events: auto;" class="btn btn-primary" value="Send"
+                                formaction="{% url 'update_admin' %}">Сохранить</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="modal fade" style="pointer-events: none;" id="DeleteModal{{s.id}}" tabindex="-1" aria-labelledby="DeleteModal{{s.id}}Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="pointer-events: none;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="DeleteModal{{s.id}}Label">Удаление заявки №{{s.number}}</h5>
+                    <button type="button" style="pointer-events: auto;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Вы уверены? Изменения необратимы.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" style="pointer-events: auto;" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <form method="post" action="{% url 'delete_admin' s.id %}">
+                        {% csrf_token %}
+                        <button type="submit" style="pointer-events: auto;" class="btn btn-danger" style="margin-bottom: 6px">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

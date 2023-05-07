@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -66,7 +67,7 @@ AUTH_USER_MODEL = 'oauth.KeycloakUser'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'req3d/templates'],
+        'DIRS': [BASE_DIR / 'req3d/templates', os.path.join(BASE_DIR, 'admin_panel', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -136,4 +137,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TELEGRAM_BOT_API_KEY = '6173981128:AAGVhJFSY6hDIUAYmjSYsI1uN2sPBNuAa6s'
 SIGNALS = [
     'bot.signals',
+]
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'admin_panel', 'static'),
 ]

@@ -19,6 +19,9 @@ from appform.views import appform_view
 from django.conf.urls.static import static
 from django.conf import settings
 from oauth import views
+from django.contrib.auth import views as auth_views
+
+admin.site.site_title = "Система заявок для 3Д-печати"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +29,7 @@ urlpatterns = [
     path('request/', include('appform.urls')),
     # path('auth/user', views.get_authenticated_user, name='get_authenticated_user'),
     path('oauth2/', include('oauth.urls')),
-    path('instructions/', include('instructions.urls'))
+    path('status/', include('status_check.urls')),
+    path('instructions/', include('instructions.urls')),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
