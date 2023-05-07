@@ -10,6 +10,6 @@ class MyAppConfig(AppConfig):
 
     def ready(self):
         import bot.management.commands.bot
-        import bot.signals
+
 
 

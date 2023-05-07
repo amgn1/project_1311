@@ -64,6 +64,7 @@ class Articles(models.Model):
     comment = models.CharField('Комментарий к заявке', max_length=500, validators=[], blank=True, null=True)
     status = models.CharField('Статус заказа', max_length=30, choices=STATUS, default='На рассмотрении')
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    status_changed = models.BooleanField(default=False)
 
 
     def __str__(self):
@@ -72,3 +73,12 @@ class Articles(models.Model):
     class Meta:
         verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            # Если заказ уже существует, то проверяем, изменился ли статус
+            old_status = Articles.objects.get(pk=self.pk).status
+            if old_status != self.status:
+                self.status_changed = True
+        super().save(*args, **kwargs)
+

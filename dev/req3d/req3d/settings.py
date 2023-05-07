@@ -135,4 +135,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TELEGRAM_BOT_API_KEY = '6173981128:AAGVhJFSY6hDIUAYmjSYsI1uN2sPBNuAa6s'
-
+SIGNALS = [
+    'bot.signals',
+]

@@ -1,21 +1,32 @@
+import requests
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from telebot import TeleBot
 from telebot import types
 from appform.models import Articles
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from bot.models import TgUser
+
 
 # Объявление переменной бота
 bot = TeleBot(settings.TELEGRAM_BOT_API_KEY, threaded=False)
 
 class Command(BaseCommand):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
 
     def handle(self, *args, **kwargs):
         bot.enable_save_next_step_handlers(delay=2) # Сохранение обработчиков
         bot.load_next_step_handlers()								# Загрузка обработчиков
-        bot.infinity_polling()											# Бесконечный цикл бота
+        bot.infinity_polling()
+    # Бесконечный цикл бота
+
+    def send_message(chat_id, text):
+        url = f'https://api.telegram.org/bot{settings.TELEGRAM_BOT_API_KEY}/sendMessage'
+        data = {'chat_id': chat_id, 'text': text}
+        response = requests.post(url, data=data)
+        return response.json()
+
 
     @bot.message_handler(commands=['start'])
     def start_handler(message):
@@ -57,9 +68,9 @@ class Command(BaseCommand):
         # Сохраняем изменения в базе данных
             my_object.save()
             bot.answer_callback_query(callback_query.id)
-            bot.send_message(callback_query.from_user.id, f"Заказ {button_text} отменен")
+            bot.send_message(callback_query.from_user.id, f"Уведомление заказа {button_text} отменено")
         except:
-            print('Что то с этой хуйней')
+            print('Ошибка')
 
     @bot.message_handler(content_types=['text'])
     def handle_text(message):
@@ -74,11 +85,19 @@ class Command(BaseCommand):
             try:
                 order = Articles.objects.get(number=number)  # получаем заказ по номеру
                 status = order.status  # получаем статус заказа
-                if TgUser.objects.filter(user=message.from_user.username).exists() and TgUser.objects.filter(number=number).exists() and TgUser.objects.filter(order='Да').exists():
-                    bot.send_message(message.from_user.id,f'Cтатус заказа: {status}')
-
-                else:
-                    bot.send_message(message.from_user.id, f'Cтатус заказа: {status}\n\nЖелаете, чтобы отправлял Вам уведомления тогда, когда статус заказа изменится?', reply_markup=markup1)
+                print('s',status)
+                try:
+                    order = TgUser.objects.get(number=number, user=message.from_user.username)
+                    status1 = order.order
+                    print('sss',status1)
+                    if status1 == 'Да':
+                        bot.send_message(message.from_user.id,f'Cтатус заказа: {status}')
+                    else:
+                        bot.send_message(message.from_user.id, f'Cтатус заказа: {status}\n\nЖелаете, чтобы отправлял Вам уведомления тогда, когда статус заказа изменится?', reply_markup=markup1)
+                except:
+                    bot.send_message(message.from_user.id,
+                                     f'Cтатус заказа: {status}\n\nЖелаете, чтобы отправлял Вам уведомления тогда, когда статус заказа изменится?',
+                                     reply_markup=markup1)
             except:
                 bot.send_message(message.from_user.id,
                                  f'Заказ № {number} не найден\n\nПроверьте и отправьте еще раз',
@@ -94,16 +113,17 @@ class Command(BaseCommand):
 
             if callback_query.data == "button3":
                 nonlocal number
-                print(number)
-                order = Articles.objects.get(number=number)
-                user = TgUser(number=order.number, user=message.from_user.username, order='Да')
-                user.save()
+                if TgUser.objects.filter(user=message.from_user.username).exists():
+                    my_object = TgUser.objects.get(number=number, user=message.from_user.username)
+                    my_object.order = 'Да'
+                    my_object.save()
+                else:
+                    user = TgUser(number=number, user=message.from_user.username, order='Да')
+                    user.save()
                 bot.send_message(callback_query.from_user.id, 'Отлично! Как изменится статус, Вы тут же об этом узнаете.'
                                                               '\n\nВы можете отменить уведомления, набрав команду /cancellation')
             elif callback_query.data == "button4":
                 bot.send_message(callback_query.from_user.id, 'Хорошо! Вы всегда можете написать мне и узнать статус')
 
 
-    def send_telegram_message(message):
-        if TgUser.objects.filter(order='Да').exists():
-            bot.send_message(chat_id=message.chat.id, text=message)
+
