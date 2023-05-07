@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'oauth.apps.AuthConfig',
     'instructions',
     'widget_tweaks',
-    'telegram_bot_app'
+    'bot'
 ]
 
 MIDDLEWARE = [
@@ -59,9 +59,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'req3d.urls'
 
 AUTHENTICATION_BACKENDS = [
-    'oauth.auth.DiscordAuthenticationBackend'
+    'oauth.auth.KeycloakAuthenticationBackend'
 ]
-AUTH_USER_MODEL = 'oauth.DiscordUser'
+AUTH_USER_MODEL = 'oauth.KeycloakUser'
 
 TEMPLATES = [
     {
@@ -117,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -133,3 +133,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+TELEGRAM_BOT_API_KEY = '6173981128:AAGVhJFSY6hDIUAYmjSYsI1uN2sPBNuAa6s'
+SIGNALS = [
+    'bot.signals',
+]

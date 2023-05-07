@@ -13,8 +13,9 @@ def appform_view(request):
         context = {'form': form}
         if form.is_valid():
             instance = form.save(commit=False)
-            instance.user_id = request.user.id
+            instance.user_id = request.user.sub
             instance.save()
+
     else:
         form = ArticlesForm()
         context = {'form': form}

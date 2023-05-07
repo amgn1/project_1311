@@ -5,88 +5,94 @@
 
 {% block content %}
 
-<div class="mt-auto" style="padding: 5% 0 10% 0;">
+
+<div class="mt-auto" style="padding: 4% 0 10% 0;">
     <div class="container p-4">
         <p class='text-center mb-4 display-6'>
-            <strong>Ваши поданные заявки</strong>
+            <strong>Поданные заявки</strong>
             <br>
         </p>
         <p class='text-center mb-4 fs-4'>
-            <small class="text-muted">На карточках ниже приведена краткая сводка информации о ваших заявках. В соответствии с цветом обводки карточки Вы можете узнать стутус вашей заявки. Вы можете получить подробную информацию или изменить конкретную заявку кликнув соответствующие кнопки.</small>
+            <small class="text-muted">Здесь можно проверить статус заявки и внести изменения, нажав на соответствующие кнопки.<br/>
+                Подать заявку можно <a href="{% url 'appform' %}"><span style='text-decoration: underline;'>здесь</span></a></small>
         </p>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4 mt-auto" style='margin: auto'>
+
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 mt-auto" style='margin: 0 20px'>
         {% for obj, form in send_data %}
-        <div class="col" id="card_{{obj.pk}}">
+        <div class="col mx-auto" id="card_{{obj.pk}}">
             <div class="card h-100">
                 <div id="{{obj.number}}">
                     {% comment %} <img src="{{obj.dmodel}}" class="card-img-top" alt="Skyscrapers"/> {% endcomment %}
                     <canvas id="{{obj.number}}a"></canvas>
                         <!-- Сюда помещается 3д-модель -->
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">Заявка №{{obj.number}}</h5>
-                    <p class="card-text">
-                        <b>Проект:</b> {{obj.project_name}} <br>
-                        <b>Руководитель проекта:</b> {{obj.teach_name}} <br>
-                        <b>Cтатус:</b> {{obj.status}} <br>
-                        {% if obj.comment %}
-                        <b>Комментарий проверяющего:</b> {{obj.comment}} <br>
-                        {% endif %}
-
-                    </p>
-                    
-                    <!-- Button trigger update modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{obj.number}}">
-                        Изменить
-                    </button>
+                <div id="card-body" class="card-body">
+                    <div id="card-body-wrapper">
+                        <div id="card-body-container">
+                            <h5 class="card-title">Заявка №{{obj.number}}</h5>
+                            <p class="card-text">
+                                <b>Проект:</b> {{obj.project_name}} <br>
+                                <b>Руководитель проекта:</b> {{obj.teach_name}} <br>
+                                <b>Cтатус:</b> {{obj.status}} <br>
+                                {% if obj.comment %}
+                                <b>Комментарий проверяющего:</b> {{obj.comment}} <br>
+                                {% endif %}
+                            </p>
+                        </div>
                         
-                    <!-- Button trigger delete modal -->
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{obj.number}}">
-                        Удалить
-                    </button>
-                         
-                    <!-- Modal Update -->
-                    <div class="modal fade" id="Modal{{obj.number}}" tabindex="-1" aria-labelledby="Modal{{obj.number}}Label" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="Modal{{obj.number}}Label">Изменение заявки №{{obj.number}}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                {% comment %} <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}"> {% endcomment %}
-                                    <div class="modal-body">
-                                        <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}">
-                                            {% csrf_token %}
-                                        <div class="form-container">
-                                            <input type="hidden" name="object_id" value="{{obj.pk}}">
-                                            {% for field in form %}
-                                                <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
-                                                    <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
-                                                    {% if field.errors %}
-                                                    {{ field|add_class:"is-invalid" }}
-                                                    <div class="invalid-feedback">
-                                                        {% for error in field.errors %}
-                                                            {{ error }}
-                                                        {% endfor %}
+                        <!-- Button trigger update modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{obj.number}}">
+                            Изменить
+                        </button>
+                            
+                        <!-- Button trigger delete modal -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{obj.number}}">
+                            Удалить
+                        </button>
+                            
+                        <!-- Modal Update -->
+                        <div class="modal fade" id="Modal{{obj.number}}" tabindex="-1" aria-labelledby="Modal{{obj.number}}Label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="Modal{{obj.number}}Label">Изменение заявки №{{obj.number}}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    {% comment %} <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}"> {% endcomment %}
+                                        <div class="modal-body">
+                                            <form class="object-form" action="{% url 'object_submit' %}" method="POST" enctype="multipart/form-data" id="update_form_{{obj.pk}}">
+                                                {% csrf_token %}
+                                            <div class="form-container">
+                                                <input type="hidden" name="object_id" value="{{obj.pk}}">
+                                                {% for field in form %}
+                                                    <div class="form-group mb-3 {% if field.errors %} has-error {% endif %}">
+                                                        <label class="form-label" for="{{field.id_for_lable}}" style="margin-bottom: 10px;">{{ field.label }}</label>
+                                                        {% if field.errors %}
+                                                        {{ field|add_class:"is-invalid" }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in field.errors %}
+                                                                {{ error }}
+                                                            {% endfor %}
+                                                        </div>
+                                                        {% else %}
+                                                        {{ field }}
+                                                        {% endif %}
                                                     </div>
-                                                    {% else %}
-                                                    {{ field }}
-                                                    {% endif %}
-                                                </div>
-                                            {% endfor %}
-                                        </form>
+                                                {% endfor %}
+                                            </form>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                        <input class="btn btn-primary" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
-                                    </div>
-                                {% comment %} </form> {% endcomment %}
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                            <input class="btn btn-primary" type="button" onclick=submitForm('update_form_{{ obj.pk }}') value="Сохранить">
+                                        </div>
+                                    {% comment %} </form> {% endcomment %}
                             </div>
                         </div>
                     </div>
+                </div>
 
                     <!-- Modal Delete -->
                     <div class="modal fade" id="deleteModal{{obj.number}}" tabindex="-1" aria-labelledby="deleteModal{{obj.number}}Label" aria-hidden="true">
@@ -111,13 +117,14 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Последний раз обновлена {{obj.time_created}}</small>
+                    <small class="text-muted">Дата создания {{ obj.time_created }}</small>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
 
 <script src="{% static 'home/js/jquery-3.6.4.min.js' %}"></script>
 <script>
@@ -160,11 +167,26 @@
         xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         xhr.onload = function() {
-            // Здесь обрабатывается ответ - TODO
+            var response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                location.reload();
+            } else {
+                var errorMessage = response.error_msg;
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.innerText = 'Проверьте данные';
+                alertDiv.style.position = 'fixed';
+                alertDiv.style.bottom = '50px';
+                alertDiv.style.right = '40px';
+                alertDiv.style.zIndex = 5050;
+                document.body.appendChild(alertDiv);
+                setTimeout(function() {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }, 5000);
+            }
         };
         xhr.send(formData);
     }
-
 </script>
 
 <script src="{% static 'home/js/three.js' %}"></script>
@@ -172,7 +194,6 @@
 <script src="{% static 'home/js/WebGL.js' %}"></script>
 
 <script>
-
     function rendererCommon(canvas, model) {
         
         // Variabels, do not change
@@ -190,9 +211,13 @@
         scene.background = new THREE.Color(0xB0DFE5);
 
         // Creating a Camera
-        var camera = new THREE.PerspectiveCamera(cameraFov, document.getElementById(canvas).clientWidth / document.getElementById(canvas).clientHeight, 1, 15);
+        var canvasElem = document.getElementById(canvas);
+        var width = canvasElem.clientWidth;
+        var height = canvasElem.clientHeight;
+        var aspectRatio = width / height;
+        var camera = new THREE.PerspectiveCamera(cameraFov, aspectRatio, 1, 15);
         cameraTarget = new THREE.Vector3(0, 0, 0);
-            
+
         // STL Loader - Model
         var loader = new THREE.STLLoader();
         loader.load(model, function(geometry) {
@@ -284,23 +309,30 @@
         window.addEventListener("resize", onWindowResize);
     
         function onWindowResize() {
-    
-            camera.aspect = (document.getElementById(canvas).clientWidth) / (document.getElementById(canvas).clientHeight);
-    
+            var canvasElem = document.getElementById(canvas);
+            camera.aspect = canvasElem.clientWidth / canvasElem.clientHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(document.getElementById(canvas).clientWidth, document.getElementById(canvas).clientHeight);
+            renderer.setSize(canvasElem.clientWidth, canvasElem.clientHeight);
+            canvasElem.style.height = canvasElem.clientWidth / camera.aspect + 'px';
         }
+
         
         // Creating a Renderer
-        var renderer = new THREE.WebGLRenderer({
-            canvas: document.getElementById(canvas + 'a'),
-            antialias: true
+            var renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById(canvas + 'a'),
+        antialias: true
         });
 
         renderer.setClearColor(0x72C2FB, 1);
         renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(document.getElementById(canvas).clientWidth, document.getElementById(canvas).clientHeight);
-                
+
+        // Set canvas width and height
+        renderer.setSize(width, height);
+
+        // Set aspect ratio on initial load
+        camera.aspect = aspectRatio;
+        camera.updateProjectionMatrix();
+
         renderer.gammaInput = true;
         renderer.gammaOutput = true;
         renderer.shadowMap.enabled = true;
@@ -322,12 +354,9 @@
     {% for item in data %}
         rendererCommon('{{ item.number }}', '{{ item.dmodel }}');
     {% endfor %}
-    
-    
+
 </script>
 
 
 {% endblock %}
-
-
 

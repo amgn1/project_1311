@@ -76,7 +76,7 @@
                                 <a class="nav-link custom-font-size {% if request.get_full_path == "/instructions/" %}active{% endif %}" href="{% url 'instructions' %}"> Инструкция</a>
                             </li>
 
-                            {% if user.discord_tag %}
+                            {% if user.full_name %}
                                 {% comment %} <li class="nav-item">
                                     <a class="nav-link custom-font-size" href="{% url 'profile' %}"><i class="bi bi-person-fill"></i> Профиль</a>
                                 </li>
@@ -95,12 +95,12 @@
                                         style="padding: 1% 1% 1% 1%"
                                     >
                                         <img
-                                            src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png"
+                                            src="{{user.avatar}}"
                                             class="rounded-circle"
                                             height="25"
                                             loading="lazy"
                                         />
-                                        {{ user.discord_tag }}
+                                        {{ user.full_name }}
                                     </span>
                                     <ul
                                         class="dropdown-menu dropdown-menu-end align-items-center"
