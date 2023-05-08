@@ -5,6 +5,7 @@ from telebot import TeleBot
 from telebot import types
 from appform.models import Articles
 from bot.models import TgUser
+import json
 
 
 # Объявление переменной бота
@@ -62,6 +63,7 @@ class Command(BaseCommand):
     def process_callback_button1(callback_query: types.CallbackQuery):
         try:
             button_text = callback_query.data[7:]
+            print(f'{button_text} button text')
             my_object = TgUser.objects.get(number=button_text, user = callback_query.from_user.username)
         # Изменяем значение поля
             my_object.order = 'Нет'
@@ -75,9 +77,13 @@ class Command(BaseCommand):
     @bot.message_handler(content_types=['text'])
     def handle_text(message):
         if message.text[0:7].lower() in "заказ №":
+            print(message.text)
             number = message.text[7:]  # номер заказа, который нужно найти
-            print(number)
-            btn1 = types.InlineKeyboardButton("Да", callback_data='button3')
+            print(f'{number} initial number')
+            data = {"b": "3", "n": number, "u": message.from_user.username, "id": message.from_user.id}
+            x = json.dumps(data)
+            print(x)
+            btn1 = types.InlineKeyboardButton("Да", callback_data=x)
             btn2 = types.InlineKeyboardButton("Нет", callback_data='button4')
             markup1 = types.InlineKeyboardMarkup([[btn1, btn2]])
             btn3 = types.InlineKeyboardButton("Отправить номер", callback_data='button1')
@@ -86,9 +92,11 @@ class Command(BaseCommand):
                 order = Articles.objects.get(number=number)  # получаем заказ по номеру
                 status = order.status  # получаем статус заказа
                 print('s',status)
+                print(order.number, 'order number 1')
                 try:
                     order = TgUser.objects.get(number=number, user=message.from_user.username)
                     status1 = order.order
+                    print(order.number, 'order number 2')
                     print('sss',status1)
                     if status1 == 'Да':
                         bot.send_message(message.from_user.id,f'Cтатус заказа: {status}')
@@ -98,7 +106,8 @@ class Command(BaseCommand):
                     bot.send_message(message.from_user.id,
                                      f'Cтатус заказа: {status}\n\nЖелаете, чтобы отправлял Вам уведомления тогда, когда статус заказа изменится?',
                                      reply_markup=markup1)
-            except:
+            except Exception as e:
+                print(e)
                 bot.send_message(message.from_user.id,
                                  f'Заказ № {number} не найден\n\nПроверьте и отправьте еще раз',
                                  reply_markup=markup2)
@@ -106,24 +115,35 @@ class Command(BaseCommand):
         # Если пользователь отправил слово/фразу, на которое(ую) нет ответа
         else:
             bot.send_message(message.from_user.id, "Извините, я Вас не понимаю")
+        
+        @bot.callback_query_handler(func=lambda c: c.data in ['button4'])
+        def process_callback_button2(callback_query: types.CallbackQuery):
+            bot.answer_callback_query(callback_query.id)
+            if callback_query.data == "button4":
+                bot.send_message(callback_query.from_user.id, 'Хорошо! Вы всегда можете написать мне и узнать статус')
 
-        @bot.callback_query_handler(func=lambda c: c.data in ['button3', 'button4'])
+        @bot.callback_query_handler(func=lambda c: json.loads(c.data)["b"] in ['3'])
         def process_callback_button1(callback_query: types.CallbackQuery):
             bot.answer_callback_query(callback_query.id)
-
-            if callback_query.data == "button3":
-                nonlocal number
-                if TgUser.objects.filter(user=message.from_user.username).exists():
-                    my_object = TgUser.objects.get(number=number, user=message.from_user.username)
+            data = json.loads(callback_query.data)
+            if data["b"] == "3":
+                print(message.text)
+                number = data["n"]
+                username = data["u"]
+                id = data["id"]
+                print(number)
+                if TgUser.objects.filter(number=number, user=username).exists():
+                    print('debug')
+                    my_object = TgUser.objects.get(number=number, user=username)
+                    print(my_object.number)
                     my_object.order = 'Да'
                     my_object.save()
                 else:
-                    user = TgUser(number=number, user=message.from_user.username, order='Да')
+                    user = TgUser(number=number, user=username, order='Да', user_id = id)
                     user.save()
                 bot.send_message(callback_query.from_user.id, 'Отлично! Как изменится статус, Вы тут же об этом узнаете.'
                                                               '\n\nВы можете отменить уведомления, набрав команду /cancellation')
-            elif callback_query.data == "button4":
-                bot.send_message(callback_query.from_user.id, 'Хорошо! Вы всегда можете написать мне и узнать статус')
+            
 
 
 
