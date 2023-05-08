@@ -94,12 +94,14 @@
                                         aria-expanded="false"
                                         style="padding: 1% 1% 1% 1%"
                                     >
+                                    {% if user.avatar %}
                                         <img
                                             src="{{user.avatar}}"
                                             class="rounded-circle"
                                             height="25"
                                             loading="lazy"
                                         />
+                                    {% endif %}
                                         {{ user.full_name }}
                                     </span>
                                     <ul
