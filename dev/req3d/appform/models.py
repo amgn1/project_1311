@@ -118,4 +118,33 @@ def delete_old_file(sender, instance, **kwargs):
 
     return True
 
+@receiver(pre_save, sender=Articles)
+def delete_model_file(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+    try:
+        old_dmodel = sender.objects.get(pk=instance.pk).dmodel
+    except sender.DoesNotExist:
+        return False
 
+    new_dmodel = instance.dmodel
+    if old_dmodel != new_dmodel:
+        if os.path.isfile(old_dmodel.path):
+            os.remove(old_dmodel.path)
+            dmodel_deleted.send(sender=sender, path=old_dmodel.path)
+
+
+@receiver(pre_save, sender=Articles)
+def delete_note_file(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+    try:
+        old_note = sender.objects.get(pk=instance.pk).note
+    except sender.DoesNotExist:
+        return False
+
+    new_note = instance.note
+    if old_note != new_note and new_note != None:
+        if os.path.isfile(old_note.path):
+            os.remove(old_note.path)
+            note_deleted.send(sender=sender, path=old_note.path)
