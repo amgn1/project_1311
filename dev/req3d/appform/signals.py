@@ -5,8 +5,6 @@ from appform.models import Articles
 from bot.models import TgUser
 
 
-
-
 @receiver(post_save, sender=Articles)
 def send_notification(sender, instance, **kwargs):
     print(instance.number)
@@ -29,3 +27,11 @@ def send_notification(sender, instance, **kwargs):
             print(a)
     except Exception as e:
         print(e)
+
+
+
+@receiver(post_save, sender=Articles)
+def mymodel_post_save(sender, instance, created, **kwargs):
+    if created:
+        print('adsfg')
+        Command.send_message('385988250', f'Появился новый заказ №{instance.number}')

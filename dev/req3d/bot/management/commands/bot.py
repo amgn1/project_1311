@@ -25,6 +25,7 @@ class Command(BaseCommand):
     def send_message(chat_id, text):
         url = f'https://api.telegram.org/bot{settings.TELEGRAM_BOT_API_KEY}/sendMessage'
         data = {'chat_id': chat_id, 'text': text}
+        print('Эта хуйня',chat_id)
         response = requests.post(url, data=data)
         return response.json()
 
