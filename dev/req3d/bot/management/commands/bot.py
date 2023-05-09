@@ -42,7 +42,7 @@ class Command(BaseCommand):
     @bot.callback_query_handler(func=lambda c: c.data == 'button1')
     def process_callback_button1(callback_query: types.CallbackQuery):
         bot.answer_callback_query(callback_query.id)
-        bot.send_message(callback_query.from_user.id, 'Пожалуйста, перед номер заказа напишите "Заказ №"')
+        bot.send_message(callback_query.from_user.id, 'Перед отправкой сообщения, проверьте правильность написания номера на наличие возможных опечаток.')
 
     @bot.message_handler(commands=['cancellation'])
     def start_handler(message):
@@ -77,9 +77,9 @@ class Command(BaseCommand):
 
     @bot.message_handler(content_types=['text'])
     def handle_text(message):
-        if message.text[0:7].lower() in "заказ №":
+        if message.text.isdigit():
             print(message.text)
-            number = message.text[7:]  # номер заказа, который нужно найти
+            number = message.text  # номер заказа, который нужно найти
             print(f'{number} initial number')
             data = {"b": "3", "n": number, "u": message.from_user.username, "id": message.from_user.id}
             x = json.dumps(data)

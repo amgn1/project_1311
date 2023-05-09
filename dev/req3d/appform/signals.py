@@ -34,4 +34,4 @@ def send_notification(sender, instance, **kwargs):
 def mymodel_post_save(sender, instance, created, **kwargs):
     if created:
         print('adsfg')
-        Command.send_message('385988250', f'Появился новый заказ №{instance.number}')
+        Command.send_message('251150808', f'Появился новый заказ №{instance.number}')
